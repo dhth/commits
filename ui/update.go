@@ -20,7 +20,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			if m.activePane == commitsList {
 				return m, tea.Quit
+			} else if m.activePane == helpView {
+				m.activePane = m.lastPane
 			} else {
+				m.commitDetailsVP.GotoTop()
 				m.activePane = commitsList
 			}
 		case "enter":
@@ -49,6 +52,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						cmds = append(cmds, openRevisionRangeInEditor(m.config.OpenInEditorCmd, fmt.Sprintf("%s~1..%s", hash, hash)))
 					}
 				}
+			} else {
+				m.message = "editor_command is not configured"
 			}
 		case "ctrl+t":
 			switch m.activePane {
@@ -78,7 +83,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.commitsList.CursorUp()
 				commit, ok := m.commitsList.SelectedItem().(Commit)
 				if ok {
-					m.commitStatsVP.SetContent(commit.renderStats())
+					m.commitDetailsVP.SetContent(commit.renderStats())
 					m.activePane = commitDetails
 				}
 			}
@@ -88,7 +93,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.commitsList.CursorDown()
 				commit, ok := m.commitsList.SelectedItem().(Commit)
 				if ok {
-					m.commitStatsVP.SetContent(commit.renderStats())
+					m.commitDetailsVP.SetContent(commit.renderStats())
 					m.activePane = commitDetails
 				}
 			}
@@ -96,12 +101,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.activePane == commitsList {
 				commit, ok := m.commitsList.SelectedItem().(Commit)
 				if ok {
-					m.commitStatsVP.SetContent(commit.renderStats())
+					m.commitDetailsVP.SetContent(commit.renderStats())
 					m.activePane = commitDetails
 				}
-			} else {
+			} else if m.activePane == commitDetails {
 				m.activePane = commitsList
 			}
+		case "?":
+			m.lastPane = m.activePane
+			m.activePane = helpView
 		}
 	case hideHelpMsg:
 		m.showHelp = false
@@ -113,12 +121,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.commitsList.SetWidth(msg.Width)
 
 		if !m.commitStatsVPReady {
-			m.commitStatsVP = viewport.New(msg.Width, msg.Height-7)
-			m.commitStatsVP.HighPerformanceRendering = false
+			m.commitDetailsVP = viewport.New(msg.Width, msg.Height-7)
+			m.commitDetailsVP.HighPerformanceRendering = false
 			m.commitStatsVPReady = true
 		} else {
-			m.commitStatsVP.Width = msg.Width
-			m.commitStatsVP.Height = msg.Height - 7
+			m.commitDetailsVP.Width = msg.Width
+			m.commitDetailsVP.Height = msg.Height - 7
+		}
+
+		if !m.helpVPReady {
+			m.helpVP = viewport.New(msg.Width, msg.Height-7)
+			m.helpVP.HighPerformanceRendering = false
+			m.helpVP.SetContent(helpText)
+			m.helpVPReady = true
+		} else {
+			m.helpVP.Width = msg.Width
+			m.helpVP.Height = msg.Height - 7
 		}
 	case repoInfoFetchedMsg:
 		if msg.err == nil {
@@ -172,7 +190,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.commitsList, cmd = m.commitsList.Update(msg)
 		cmds = append(cmds, cmd)
 	case commitDetails:
-		m.commitStatsVP, cmd = m.commitStatsVP.Update(msg)
+		m.commitDetailsVP, cmd = m.commitDetailsVP.Update(msg)
+		cmds = append(cmds, cmd)
+	case helpView:
+		m.helpVP, cmd = m.helpVP.Update(msg)
 		cmds = append(cmds, cmd)
 	}
 

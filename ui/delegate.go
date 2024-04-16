@@ -10,8 +10,8 @@ func commitHashDelegate() list.DefaultDelegate {
 
 	d.Styles.SelectedTitle = d.Styles.
 		SelectedTitle.
-		Foreground(lipgloss.Color(CommitsListColor)).
-		BorderLeftForeground(lipgloss.Color(CommitsListColor))
+		Foreground(lipgloss.Color(commitsListColor)).
+		BorderLeftForeground(lipgloss.Color(commitsListColor))
 	d.Styles.SelectedDesc = d.Styles.
 		SelectedTitle.
 		Copy()

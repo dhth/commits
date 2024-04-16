@@ -30,9 +30,19 @@ func (m model) View() string {
 		} else {
 			commitStatsVP = viewPortStyle.Render(fmt.Sprintf("  %s\n\n%s\n",
 				commitStatsTitleStyle.Render("Commit Details"),
-				commitDetailsStyle.Render(m.commitStatsVP.View())))
+				commitDetailsStyle.Render(m.commitDetailsVP.View())))
 		}
 		content = commitStatsVP
+	case helpView:
+		var helpVP string
+		if !m.helpVPReady {
+			helpVP = "\n  Initializing..."
+		} else {
+			helpVP = viewPortStyle.Render(fmt.Sprintf("  %s\n\n%s\n",
+				helpVPTitleStyle.Render("Help"),
+				m.helpVP.View()))
+		}
+		content = helpVP
 	}
 
 	footerStyle := lipgloss.NewStyle().
@@ -43,7 +53,7 @@ func (m model) View() string {
 
 	var helpMsg string
 	if m.showHelp {
-		helpMsg = " " + helpMsgStyle.Render("ctrl+d: open in editor; enter: show commit; tab: commit details; ctrl+t: pick range; ctrl+x: clear range")
+		helpMsg = " " + helpMsgStyle.Render("press ? for help")
 	}
 
 	footerStr := fmt.Sprintf("%s%s%s",

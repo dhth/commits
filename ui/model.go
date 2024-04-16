@@ -14,6 +14,7 @@ type Pane uint
 const (
 	commitsList Pane = iota
 	commitDetails
+	helpView
 )
 
 type model struct {
@@ -25,7 +26,7 @@ type model struct {
 	commitListStyle    lipgloss.Style
 	terminalHeight     int
 	terminalWidth      int
-	commitStatsVP      viewport.Model
+	commitDetailsVP    viewport.Model
 	revStartChosen     bool
 	revEndChosen       bool
 	revStartIndex      int
@@ -33,8 +34,11 @@ type model struct {
 	revEndIndex        int
 	revEnd             string
 	activePane         Pane
+	lastPane           Pane
 	commitStatsVPReady bool
 	showHelp           bool
+	helpVP             viewport.Model
+	helpVPReady        bool
 }
 
 func (m model) Init() tea.Cmd {

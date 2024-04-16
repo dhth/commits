@@ -49,13 +49,33 @@ Reference Manual
 ---
 
 ```
-Keyboard shortcuts:
-- tab:    commit details
-- enter:  show commit/revision range
-- ctrl+d: open in editor
-- ctrl+t: pick range
-- ctrl+x: clear range
-- ctrl+p: show log
+commits Reference Manual
+
+commits has 3 views:
+    - Commit List View
+    - Commit Details View
+    - Help View (this one)
+
+Keyboard Shortcuts
+
+General
+
+    <tab>                           Switch focus between Commit List View and Commit Details View
+    <enter>                         Show commit/revision range
+    <ctrl+d>                        Open commit/revision range in your text editor (depends
+                                    on editor_command in your config file)
+    <ctrl+x>                        Clear revision range selection
+    ?                               Show help view
+
+Commit List View
+
+    <ctrl+t>                        Choose revision range start/end
+    <ctrl+p>                        Show git log
+
+Commit Details View
+
+    h/[                             Go to previous commit
+    l/]                             Go to next commit
 ```
 
 Screenshots

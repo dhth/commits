@@ -7,33 +7,36 @@ import (
 )
 
 const (
-	DefaultBackgroundColor = "#282828"
-	CommitsListColor       = "#fe8019"
-	ModeColor              = "#b8bb26"
-	HelpMsgColor           = "#83a598"
-	CommitStatsTitleColor  = "#83a598"
-	HashColor              = "#d3869b"
-	DateColor              = "#928374"
-	CommitMsgColor         = "#ffb703"
-	CommitStatsColor       = "#a2d2ff"
+	defaultBackgroundColor = "#282828"
+	commitsListColor       = "#fe8019"
+	modeColor              = "#b8bb26"
+	helpMsgColor           = "#83a598"
+	commitStatsTitleColor  = "#d3869b"
+	hashColor              = "#d3869b"
+	dateColor              = "#928374"
+	commitMsgColor         = "#ffb703"
+	commitStatsColor       = "#a2d2ff"
 	headRefColor           = "#d3869b"
 	revChoiceColor         = "#8ec07c"
+	helpViewTitleColor     = "#83a598"
+	helpHeaderColor        = "#83a598"
+	helpSectionColor       = "#fabd2f"
 )
 
 var (
 	baseStyle = lipgloss.NewStyle().
 			PaddingLeft(1).
 			PaddingRight(1).
-			Foreground(lipgloss.Color(DefaultBackgroundColor))
+			Foreground(lipgloss.Color(defaultBackgroundColor))
 
 	modeStyle = baseStyle.Copy().
 			Align(lipgloss.Center).
 			Bold(true).
-			Background(lipgloss.Color(ModeColor))
+			Background(lipgloss.Color(modeColor))
 
 	helpMsgStyle = baseStyle.Copy().
 			Bold(true).
-			Foreground(lipgloss.Color(HelpMsgColor))
+			Foreground(lipgloss.Color(helpMsgColor))
 
 	viewPortStyle = lipgloss.NewStyle().
 			PaddingTop(1).
@@ -46,7 +49,7 @@ var (
 
 	commitStatsTitleStyle = baseStyle.Copy().
 				Bold(true).
-				Background(lipgloss.Color(CommitStatsTitleColor)).
+				Background(lipgloss.Color(commitStatsTitleColor)).
 				Align(lipgloss.Left)
 
 	authorColors = []string{
@@ -83,13 +86,13 @@ var (
 	}
 
 	hashStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color(HashColor))
+			Foreground(lipgloss.Color(hashColor))
 
 	dateStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color(DateColor))
+			Foreground(lipgloss.Color(dateColor))
 
 	commitStatsStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.Color(CommitStatsColor))
+				Foreground(lipgloss.Color(commitStatsColor))
 
 	headRefStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color(headRefColor))
@@ -97,4 +100,16 @@ var (
 	revChoiceStyle = lipgloss.NewStyle().
 			PaddingRight(1).
 			Foreground(lipgloss.Color(revChoiceColor))
+
+	helpVPTitleStyle = baseStyle.Copy().
+				Bold(true).
+				Background(lipgloss.Color(helpViewTitleColor)).
+				Align(lipgloss.Left)
+
+	helpHeaderStyle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color(helpHeaderColor))
+
+	helpSectionStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.Color(helpSectionColor))
 )
