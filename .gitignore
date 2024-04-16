@@ -1,0 +1,5 @@
+commits
+.quickrun
+cosign.key
+cosign.pub
+justfile
