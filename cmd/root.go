@@ -21,10 +21,43 @@ var (
 )
 
 func Execute() {
+	currentUser, err := user.Current()
+	if err != nil {
+		die("Something went horribly wrong. Let @dhth know about this error on github: ", err.Error())
+	}
+
+	var defaultConfigFP string
+	if err == nil {
+		defaultConfigFP = fmt.Sprintf("%s/.config/commits/commits.toml", currentUser.HomeDir)
+	}
+
+	configFilePath := flag.String("config-file-path", defaultConfigFP, "location of commits' config file")
+
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "%s\nFlags:\n", "commits lets you glance at git commits through a simple TUI.\n")
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 
+	if *configFilePath == "" {
+		die("config-file-path cannot be empty")
+	}
+	var configFPExpanded string
+	if strings.Contains(*configFilePath, "~") {
+		configFPExpanded, err = expandTilde(*configFilePath)
+		if err != nil {
+			die("Something went horribly wrong. Let @dhth know about this error on github: ", err.Error())
+		}
+	} else {
+		configFPExpanded = *configFilePath
+	}
+
+	_, err = os.Stat(configFPExpanded)
+	if os.IsNotExist(err) {
+		die(cfgErrSuggestion(fmt.Sprintf("Error: file doesn't exist at %q", configFPExpanded)))
+	}
+
 	var repoPath string
-	var err error
 
 	if *path == "" {
 		cwd, err := os.Getwd()
@@ -39,10 +72,25 @@ func Execute() {
 		}
 	}
 
-	config := ui.Config{
-		Path:          repoPath,
-		IgnorePattern: *ignorePattern,
+	cfg, err := readConfig(configFPExpanded)
+	if err != nil {
+		die(cfgErrSuggestion(fmt.Sprintf("Error reading config: %s", err.Error())))
 	}
+
+	var ig string
+
+	if *ignorePattern != "" {
+		ig = *ignorePattern
+	} else if cfg.IgnorePattern != nil {
+		ig = *cfg.IgnorePattern
+	}
+
+	config := ui.Config{
+		Path:            repoPath,
+		IgnorePattern:   ig,
+		OpenInEditorCmd: cfg.EditorCmd,
+	}
+
 	ui.RenderUI(config)
 }
 

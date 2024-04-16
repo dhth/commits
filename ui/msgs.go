@@ -22,6 +22,11 @@ type showDiffFinished struct {
 	err error
 }
 
+type showCommitInEditorFinished struct {
+	hash string
+	err  error
+}
+
 type currentRevFetchedMsg struct {
 	rev string
 	err error

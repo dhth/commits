@@ -18,7 +18,7 @@ func (m model) View() string {
 	switch m.activePane {
 	case commitsList:
 		content = m.commitListStyle.Render(m.commitsList.View())
-	case commitStats:
+	case commitDetails:
 		var commitStatsVP string
 		if !m.commitStatsVPReady {
 			commitStatsVP = "\n  Initializing..."
@@ -38,7 +38,7 @@ func (m model) View() string {
 
 	var helpMsg string
 	if m.showHelp {
-		helpMsg = " " + helpMsgStyle.Render("help goes here")
+		helpMsg = " " + helpMsgStyle.Render("ctrl+d: open in editor; ctrl+p: git log; enter: show commit; tab: commit details")
 	}
 
 	footerStr := fmt.Sprintf("%s%s%s",

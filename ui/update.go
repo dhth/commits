@@ -25,7 +25,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "enter":
 			switch m.activePane {
-			case commitsList, commitStats:
+			case commitsList, commitDetails:
 				hash := m.commitsList.SelectedItem().FilterValue()
 				cmds = append(cmds, showCommit(m.config.Path, hash))
 			}
@@ -34,24 +34,32 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case commitsList:
 				cmds = append(cmds, m.showGitLog())
 			}
+		case "ctrl+d":
+			if m.config.OpenInEditorCmd != nil {
+				switch m.activePane {
+				case commitsList, commitDetails:
+					hash := m.commitsList.SelectedItem().FilterValue()
+					cmds = append(cmds, openCommitInEditor(m.config.OpenInEditorCmd, hash))
+				}
+			}
 		case "[", "h":
 			switch m.activePane {
-			case commitStats:
+			case commitDetails:
 				m.commitsList.CursorUp()
 				commit, ok := m.commitsList.SelectedItem().(Commit)
 				if ok {
 					m.commitStatsVP.SetContent(commit.renderStats())
-					m.activePane = commitStats
+					m.activePane = commitDetails
 				}
 			}
 		case "]", "l":
 			switch m.activePane {
-			case commitStats:
+			case commitDetails:
 				m.commitsList.CursorDown()
 				commit, ok := m.commitsList.SelectedItem().(Commit)
 				if ok {
 					m.commitStatsVP.SetContent(commit.renderStats())
-					m.activePane = commitStats
+					m.activePane = commitDetails
 				}
 			}
 		case "tab", "shift+tab":
@@ -59,7 +67,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				commit, ok := m.commitsList.SelectedItem().(Commit)
 				if ok {
 					m.commitStatsVP.SetContent(commit.renderStats())
-					m.activePane = commitStats
+					m.activePane = commitDetails
 				}
 			} else {
 				m.activePane = commitsList
@@ -133,7 +141,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case commitsList:
 		m.commitsList, cmd = m.commitsList.Update(msg)
 		cmds = append(cmds, cmd)
-	case commitStats:
+	case commitDetails:
 		m.commitStatsVP, cmd = m.commitStatsVP.Update(msg)
 		cmds = append(cmds, cmd)
 	}

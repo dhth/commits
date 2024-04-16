@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"time"
+
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
@@ -11,7 +13,7 @@ type Pane uint
 
 const (
 	commitsList Pane = iota
-	commitStats
+	commitDetails
 )
 
 type model struct {
@@ -31,6 +33,7 @@ type model struct {
 
 func (m model) Init() tea.Cmd {
 	return tea.Batch(
+		hideHelp(time.Minute*1),
 		getCurrentRev(m.config.Path),
 		getCommits(m.config.Path),
 	)

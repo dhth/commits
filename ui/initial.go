@@ -24,6 +24,7 @@ func InitialModel(config Config) model {
 		config:          config,
 		commitsList:     list.New(nil, appDelegate, 0, 0),
 		commitListStyle: tableListStyle,
+		showHelp:        true,
 	}
 
 	m.commitsList.Title = "Commits"

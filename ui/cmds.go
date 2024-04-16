@@ -2,8 +2,10 @@ package ui
 
 import (
 	"fmt"
+	"log"
 	"os/exec"
 	"runtime"
+	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -139,5 +141,26 @@ func (m model) showGitLog() tea.Cmd {
 			return showDiffFinished{err}
 		}
 		return tea.Msg(showDiffFinished{})
+	})
+}
+
+func openCommitInEditor(command []string, commitHash string) tea.Cmd {
+	cmdRep := make([]string, 0)
+	for _, word := range command {
+		if strings.Contains(word, "{{revision}}") {
+			cmdRep = append(cmdRep, strings.Replace(word, "{{revision}}", fmt.Sprintf("%s~1..%s", commitHash, commitHash), 1))
+		} else {
+			cmdRep = append(cmdRep, word)
+		}
+	}
+
+	log.Printf("%#v", cmdRep)
+	c := exec.Command(cmdRep[0], cmdRep[1:]...)
+
+	return tea.ExecProcess(c, func(err error) tea.Msg {
+		if err != nil {
+			return showCommitInEditorFinished{err: err}
+		}
+		return tea.Msg(showCommitInEditorFinished{hash: commitHash})
 	})
 }
