@@ -34,7 +34,7 @@ func Execute() {
 	configFilePath := flag.String("config-file-path", defaultConfigFP, "location of commits' config file")
 
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "%s\nFlags:\n", "commits lets you glance at git commits through a simple TUI.\n")
+		fmt.Fprintf(os.Stderr, "%s\nFlags:\n", helpText)
 		flag.PrintDefaults()
 	}
 	flag.Parse()

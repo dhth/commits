@@ -93,6 +93,16 @@ func getCurrentRev(path string) tea.Cmd {
 	}
 }
 
+func showRevisionRange(path string, revisionRange string) tea.Cmd {
+	c := exec.Command("git", "-C", path, "diff", revisionRange)
+	return tea.ExecProcess(c, func(err error) tea.Msg {
+		if err != nil {
+			return showDiffFinished{err}
+		}
+		return tea.Msg(showDiffFinished{})
+	})
+}
+
 func showCommit(path string, hash string) tea.Cmd {
 	c := exec.Command("git", "-C", path, "show", hash)
 	return tea.ExecProcess(c, func(err error) tea.Msg {
@@ -144,11 +154,11 @@ func (m model) showGitLog() tea.Cmd {
 	})
 }
 
-func openCommitInEditor(command []string, commitHash string) tea.Cmd {
+func openRevisionRangeInEditor(command []string, revisionRange string) tea.Cmd {
 	cmdRep := make([]string, 0)
 	for _, word := range command {
 		if strings.Contains(word, "{{revision}}") {
-			cmdRep = append(cmdRep, strings.Replace(word, "{{revision}}", fmt.Sprintf("%s~1..%s", commitHash, commitHash), 1))
+			cmdRep = append(cmdRep, strings.Replace(word, "{{revision}}", revisionRange, 1))
 		} else {
 			cmdRep = append(cmdRep, word)
 		}
@@ -161,6 +171,6 @@ func openCommitInEditor(command []string, commitHash string) tea.Cmd {
 		if err != nil {
 			return showCommitInEditorFinished{err: err}
 		}
-		return tea.Msg(showCommitInEditorFinished{hash: commitHash})
+		return tea.Msg(showCommitInEditorFinished{hash: revisionRange})
 	})
 }

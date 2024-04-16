@@ -11,8 +11,13 @@ func (m model) View() string {
 	var footer string
 
 	var statusBar string
+	if m.revStartChosen && !m.revEndChosen {
+		statusBar += "picking revision range: " + revChoiceStyle.Render(fmt.Sprintf("%s..?", m.revStart))
+	} else if m.revEndChosen {
+		statusBar += "revision range picked:  " + revChoiceStyle.Render(fmt.Sprintf("%s..%s", m.revStart, m.revEnd))
+	}
 	if m.message != "" {
-		statusBar = RightPadTrim(m.message, m.terminalWidth)
+		statusBar += RightPadTrim(m.message, m.terminalWidth)
 	}
 
 	switch m.activePane {
@@ -38,7 +43,7 @@ func (m model) View() string {
 
 	var helpMsg string
 	if m.showHelp {
-		helpMsg = " " + helpMsgStyle.Render("ctrl+d: open in editor; ctrl+p: git log; enter: show commit; tab: commit details")
+		helpMsg = " " + helpMsgStyle.Render("ctrl+d: open in editor; enter: show commit; tab: commit details; ctrl+t: pick range; ctrl+x: clear range")
 	}
 
 	footerStr := fmt.Sprintf("%s%s%s",

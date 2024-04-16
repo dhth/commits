@@ -13,6 +13,14 @@ editor_command = [ "nvim", "-c", ":DiffviewOpen {{revision}}" ]
 `
 	helpText = `commits lets you glance at git commits through a simple TUI.
 
+Keyboard shortcuts:
+- tab:    commit details
+- enter:  show commit/revision range
+- ctrl+d: open in editor
+- ctrl+t: pick range
+- ctrl+x: clear range
+- ctrl+p: show log
+
 Usage: commits [flags]
 `
 )

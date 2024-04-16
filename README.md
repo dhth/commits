@@ -45,6 +45,19 @@ commits -ignore_pattern='^\[regex\]'
 commits -config-file-path='/path/to/config/file.toml'
 ```
 
+Reference Manual
+---
+
+```
+Keyboard shortcuts:
+- tab:    commit details
+- enter:  show commit/revision range
+- ctrl+d: open in editor
+- ctrl+t: pick range
+- ctrl+x: clear range
+- ctrl+p: show log
+```
+
 Screenshots
 ---
 

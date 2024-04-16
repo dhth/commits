@@ -17,6 +17,7 @@ const (
 	CommitMsgColor         = "#ffb703"
 	CommitStatsColor       = "#a2d2ff"
 	headRefColor           = "#d3869b"
+	revChoiceColor         = "#8ec07c"
 )
 
 var (
@@ -92,4 +93,8 @@ var (
 
 	headRefStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color(headRefColor))
+
+	revChoiceStyle = lipgloss.NewStyle().
+			PaddingRight(1).
+			Foreground(lipgloss.Color(revChoiceColor))
 )

@@ -26,8 +26,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			switch m.activePane {
 			case commitsList, commitDetails:
-				hash := m.commitsList.SelectedItem().FilterValue()
-				cmds = append(cmds, showCommit(m.config.Path, hash))
+				if m.revEndChosen {
+					cmds = append(cmds, showRevisionRange(m.config.Path, fmt.Sprintf("%s..%s", m.revStart, m.revEnd)))
+				} else {
+					hash := m.commitsList.SelectedItem().FilterValue()
+					cmds = append(cmds, showCommit(m.config.Path, hash))
+				}
 			}
 		case "ctrl+p":
 			switch m.activePane {
@@ -38,9 +42,35 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.config.OpenInEditorCmd != nil {
 				switch m.activePane {
 				case commitsList, commitDetails:
-					hash := m.commitsList.SelectedItem().FilterValue()
-					cmds = append(cmds, openCommitInEditor(m.config.OpenInEditorCmd, hash))
+					if m.revEndChosen {
+						cmds = append(cmds, openRevisionRangeInEditor(m.config.OpenInEditorCmd, fmt.Sprintf("%s..%s", m.revStart, m.revEnd)))
+					} else {
+						hash := m.commitsList.SelectedItem().FilterValue()
+						cmds = append(cmds, openRevisionRangeInEditor(m.config.OpenInEditorCmd, fmt.Sprintf("%s~1..%s", hash, hash)))
+					}
 				}
+			}
+		case "ctrl+t":
+			switch m.activePane {
+			case commitsList:
+				if !m.revStartChosen {
+					m.revStart = m.commitsList.SelectedItem().FilterValue()[:10]
+					m.revStartChosen = true
+					m.revStartIndex = m.commitsList.Index()
+				} else if !m.revEndChosen {
+					if m.commitsList.Index() >= m.revStartIndex {
+						m.message = "End revision cannot be before start revision"
+					} else {
+						m.revEnd = m.commitsList.SelectedItem().FilterValue()[:10]
+						m.revEndChosen = true
+					}
+				}
+			}
+		case "ctrl+x":
+			switch m.activePane {
+			case commitsList, commitDetails:
+				m.revStartChosen = false
+				m.revEndChosen = false
 			}
 		case "[", "h":
 			switch m.activePane {

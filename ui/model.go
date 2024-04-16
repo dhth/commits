@@ -26,6 +26,12 @@ type model struct {
 	terminalHeight     int
 	terminalWidth      int
 	commitStatsVP      viewport.Model
+	revStartChosen     bool
+	revEndChosen       bool
+	revStartIndex      int
+	revStart           string
+	revEndIndex        int
+	revEnd             string
 	activePane         Pane
 	commitStatsVPReady bool
 	showHelp           bool
@@ -33,7 +39,7 @@ type model struct {
 
 func (m model) Init() tea.Cmd {
 	return tea.Batch(
-		hideHelp(time.Minute*1),
+		hideHelp(time.Minute*2),
 		getCurrentRev(m.config.Path),
 		getCommits(m.config.Path),
 	)
