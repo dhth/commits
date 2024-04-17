@@ -5,11 +5,16 @@ import (
 	"strings"
 
 	humanize "github.com/dustin/go-humanize"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
 type Commit struct {
 	Commit *object.Commit
+}
+
+type branchItem struct {
+	branch *plumbing.Reference
 }
 
 type repoInfo struct {
@@ -47,4 +52,16 @@ func (c Commit) renderStats() string {
 	}
 	details += commitStatsStyle.Render(stats.String())
 	return details
+}
+
+func (b branchItem) Title() string {
+	return b.branch.Name().Short()
+}
+
+func (b branchItem) Description() string {
+	return b.branch.Hash().String()[:8]
+}
+
+func (b branchItem) FilterValue() string {
+	return b.branch.Name().Short()
 }

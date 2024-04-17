@@ -22,7 +22,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 			} else if m.activePane == helpView {
 				m.activePane = m.lastPane
-			} else {
+			} else if m.activePane == branchList {
+				if m.branchList.FilterState() != list.Filtering {
+					m.branchList.ResetFilter()
+					m.activePane = m.lastPane
+				}
+			} else if m.activePane == commitDetails {
 				m.commitDetailsVP.GotoTop()
 				m.activePane = commitsList
 			}
@@ -35,6 +40,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					hash := m.commitsList.SelectedItem().FilterValue()
 					cmds = append(cmds, showCommit(m.config.Path, hash))
 				}
+			case branchList:
+				bItem, ok := m.branchList.SelectedItem().(branchItem)
+				if ok {
+					if bItem.branch.Name().String() != m.currentRef.Name().String() {
+						cmds = append(cmds, getCommits(m.config.Repo, bItem.branch))
+					} else {
+						m.activePane = commitsList
+					}
+				}
+				m.branchList.ResetFilter()
 			}
 		case "ctrl+p":
 			switch m.activePane {
@@ -76,6 +91,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case commitsList, commitDetails:
 				m.revStartChosen = false
 				m.revEndChosen = false
+			}
+		case "ctrl+r":
+			switch m.activePane {
+			case commitsList:
+				cmds = append(cmds, getCommits(m.config.Repo, m.currentRef))
+			}
+		case "ctrl+b":
+			switch m.activePane {
+			case commitsList, commitDetails:
+				cmds = append(cmds, getBranches(m.config.Repo))
 			}
 		case "[", "h":
 			switch m.activePane {
@@ -120,6 +145,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.commitsList.SetHeight(msg.Height - h1 - 2)
 		m.commitsList.SetWidth(msg.Width)
 
+		m.branchList.SetHeight(msg.Height - h1 - 2)
+		m.branchList.SetWidth(msg.Width)
+
 		if !m.commitStatsVPReady {
 			m.commitDetailsVP = viewport.New(msg.Width, msg.Height-7)
 			m.commitDetailsVP.HighPerformanceRendering = false
@@ -143,12 +171,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.repoInfo = msg.info
 		} else {
 			m.message = fmt.Sprintf("%v", msg.info.remoteURLs)
-		}
-	case currentRevFetchedMsg:
-		if msg.err != nil {
-			m.message = msg.err.Error()
-		} else {
-			m.currentRev = msg.rev
 		}
 	case commitsFetched:
 		if msg.err != nil {
@@ -178,6 +200,27 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			}
 			m.commitsList.SetItems(commits)
+			m.commitsList.ResetSelected()
+
+			if msg.ref != nil {
+				m.currentRef = msg.ref
+			}
+
+			m.activePane = commitsList
+		}
+	case branchesFetched:
+		if msg.err != nil {
+			m.message = msg.err.Error()
+		} else {
+			var branches []list.Item
+			for _, branch := range msg.branches {
+				branches = append(branches, branchItem{
+					branch: branch,
+				})
+			}
+			m.branchList.SetItems(branches)
+			m.branchList.ResetSelected()
+			m.activePane = branchList
 		}
 	case urlOpenedinBrowserMsg:
 		if msg.err == nil {
@@ -191,6 +234,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmds = append(cmds, cmd)
 	case commitDetails:
 		m.commitDetailsVP, cmd = m.commitDetailsVP.Update(msg)
+		cmds = append(cmds, cmd)
+	case branchList:
+		m.branchList, cmd = m.branchList.Update(msg)
 		cmds = append(cmds, cmd)
 	case helpView:
 		m.helpVP, cmd = m.helpVP.Update(msg)

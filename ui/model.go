@@ -7,6 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/go-git/go-git/v5/plumbing"
 )
 
 type Pane uint
@@ -14,6 +15,7 @@ type Pane uint
 const (
 	commitsList Pane = iota
 	commitDetails
+	branchList
 	helpView
 )
 
@@ -21,8 +23,9 @@ type model struct {
 	config             Config
 	repoInfo           repoInfo
 	commitsList        list.Model
-	currentRev         string
+	currentRef         *plumbing.Reference
 	message            string
+	branchList         list.Model
 	commitListStyle    lipgloss.Style
 	terminalHeight     int
 	terminalWidth      int
@@ -44,7 +47,6 @@ type model struct {
 func (m model) Init() tea.Cmd {
 	return tea.Batch(
 		hideHelp(time.Minute*2),
-		getCurrentRev(m.config.Path),
-		getCommits(m.config.Path),
+		getCommits(m.config.Repo, nil),
 	)
 }

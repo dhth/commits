@@ -5,13 +5,13 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-func commitHashDelegate() list.DefaultDelegate {
+func defaultDelegate(color lipgloss.Color) list.DefaultDelegate {
 	d := list.NewDefaultDelegate()
 
 	d.Styles.SelectedTitle = d.Styles.
 		SelectedTitle.
-		Foreground(lipgloss.Color(commitsListColor)).
-		BorderLeftForeground(lipgloss.Color(commitsListColor))
+		Foreground(color).
+		BorderLeftForeground(color)
 	d.Styles.SelectedDesc = d.Styles.
 		SelectedTitle.
 		Copy()

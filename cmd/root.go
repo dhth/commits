@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/dhth/commits/ui"
+	"github.com/go-git/go-git/v5"
 )
 
 func die(msg string, args ...any) {
@@ -85,10 +86,16 @@ func Execute() {
 		ig = *cfg.IgnorePattern
 	}
 
+	r, err := git.PlainOpen(repoPath)
+	if err != nil {
+		die("Couldn't fetch git repo: %s", err.Error())
+	}
+
 	config := ui.Config{
 		Path:            repoPath,
 		IgnorePattern:   ig,
 		OpenInEditorCmd: cfg.EditorCmd,
+		Repo:            r,
 	}
 
 	ui.RenderUI(config)

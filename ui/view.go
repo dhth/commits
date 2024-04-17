@@ -33,6 +33,8 @@ func (m model) View() string {
 				commitDetailsStyle.Render(m.commitDetailsVP.View())))
 		}
 		content = commitStatsVP
+	case branchList:
+		content = m.commitListStyle.Render(m.branchList.View())
 	case helpView:
 		var helpVP string
 		if !m.helpVPReady {
@@ -49,7 +51,10 @@ func (m model) View() string {
 		Foreground(lipgloss.Color("#282828")).
 		Background(lipgloss.Color("#7c6f64"))
 
-	headRef := fmt.Sprintf("  %s -> %s", headRefStyle.Render("HEAD"), headRefStyle.Render(m.currentRev))
+	var headRef string
+	if m.currentRef != nil {
+		headRef = fmt.Sprintf("  %s -> %s", headRefStyle.Render("HEAD"), headRefStyle.Render(m.currentRef.Name().Short()))
+	}
 
 	var helpMsg string
 	if m.showHelp {

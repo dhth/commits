@@ -10,6 +10,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
@@ -25,15 +26,11 @@ func hideHelp(interval time.Duration) tea.Cmd {
 	})
 }
 
-func getRepoInfo(path string) tea.Cmd {
+func getRepoInfo(repo *git.Repository) tea.Cmd {
 	return func() tea.Msg {
-		r, err := git.PlainOpen(path)
-		if err != nil {
-			return repoInfoFetchedMsg{err: err}
-		}
 
 		var remoteURLs []string
-		remotes, err := r.Remotes()
+		remotes, err := repo.Remotes()
 		if err == nil {
 			for _, remote := range remotes {
 				for _, url := range remote.Config().URLs {
@@ -48,19 +45,19 @@ func getRepoInfo(path string) tea.Cmd {
 	}
 }
 
-func getCommits(path string) tea.Cmd {
+func getCommits(repo *git.Repository, ref *plumbing.Reference) tea.Cmd {
 	return func() tea.Msg {
-		r, err := git.PlainOpen(path)
-		if err != nil {
-			return commitsFetched{err: fmt.Errorf("Couldn't fetch git repo: %s", err.Error())}
-		}
-		ref, err := r.Head()
-		if err != nil {
-			return commitsFetched{err: fmt.Errorf("Couldn't get HEAD: %s", err.Error())}
+
+		var err error
+		if ref == nil {
+			ref, err = repo.Head()
+			if err != nil {
+				return commitsFetched{err: fmt.Errorf("Couldn't get HEAD: %s", err.Error())}
+			}
 		}
 
 		since := time.Now().Add(-time.Hour * 24 * 7 * 6)
-		cIter, err := r.Log(&git.LogOptions{From: ref.Hash(), Since: &since, All: false})
+		cIter, err := repo.Log(&git.LogOptions{From: ref.Hash(), Since: &since, All: false})
 
 		if err != nil {
 			return commitsFetched{err: err}
@@ -74,22 +71,27 @@ func getCommits(path string) tea.Cmd {
 			}
 			commits = append(commits, commit)
 		}
-		return commitsFetched{commits: commits}
+		return commitsFetched{commits: commits, ref: ref}
 	}
 }
 
-func getCurrentRev(path string) tea.Cmd {
+func getBranches(repo *git.Repository) tea.Cmd {
 	return func() tea.Msg {
-		r, err := git.PlainOpen(path)
+
+		branches, err := repo.Branches()
 		if err != nil {
-			return currentRevFetchedMsg{err: err}
-		}
-		ref, err := r.Head()
-		if err != nil {
-			return currentRevFetchedMsg{err: err}
+			return branchesFetched{err: fmt.Errorf("Couldn't get branches: %s", err.Error())}
 		}
 
-		return currentRevFetchedMsg{rev: ref.Name().String()}
+		var bRefs []*plumbing.Reference
+		for {
+			bRef, iterErr := branches.Next()
+			if iterErr != nil {
+				break
+			}
+			bRefs = append(bRefs, bRef)
+		}
+		return branchesFetched{branches: bRefs}
 	}
 }
 

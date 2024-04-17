@@ -9,6 +9,7 @@ import (
 const (
 	defaultBackgroundColor = "#282828"
 	commitsListColor       = "#fe8019"
+	branchListColor        = "#8ec07c"
 	modeColor              = "#b8bb26"
 	helpMsgColor           = "#83a598"
 	commitStatsTitleColor  = "#d3869b"

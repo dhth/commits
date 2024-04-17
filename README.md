@@ -41,7 +41,7 @@ editor_command = [ "nvim", "-c", ":DiffviewOpen {{revision}}" ]
 
 ```bash
 commits -path='/path/to/git/repo'
-commits -ignore_pattern='^\[regex\]'
+commits -ignore-pattern='^\[regex\]'
 commits -config-file-path='/path/to/config/file.toml'
 ```
 
@@ -51,31 +51,40 @@ Reference Manual
 ```
 commits Reference Manual
 
-commits has 3 views:
+commits has 4 views:
     - Commit List View
     - Commit Details View
-    - Help View (this one)
+    - Branch List View
+    - Help View
 
 Keyboard Shortcuts
 
-General
+   General
 
-    <tab>                           Switch focus between Commit List View and Commit Details View
-    <enter>                         Show commit/revision range
-    <ctrl+d>                        Open commit/revision range in your text editor (depends
-                                    on editor_command in your config file)
-    <ctrl+x>                        Clear revision range selection
-    ?                               Show help view
+       <tab>                           Switch focus between Commit List View and Commit Details View
+       <ctrl+d>                        Open commit/revision range in your text editor (depends
+                                       on editor_command in your config file)
+       <ctrl+x>                        Clear revision range selection
+       <ctrl+b>                        Change branch
+       ?                               Show help view
 
-Commit List View
+   Commit List View
 
-    <ctrl+t>                        Choose revision range start/end
-    <ctrl+p>                        Show git log
+       <enter>                         Show commit/revision range
+       <ctrl+t>                        Choose revision range start/end
+       <ctrl+p>                        Show git log
 
-Commit Details View
+   Commit Details View
 
-    h/[                             Go to previous commit
-    l/]                             Go to next commit
+       <enter>                         Show commit/revision range
+       h/[                             Go to previous commit
+       l/]                             Go to next commit
+
+   Branch List View
+
+       <enter>                         Pick branch
+       /                               Start filtering
+
 ```
 
 Screenshots

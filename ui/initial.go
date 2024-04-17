@@ -7,7 +7,9 @@ import (
 
 func InitialModel(config Config) model {
 
-	appDelegate := commitHashDelegate()
+	commitListDel := defaultDelegate(lipgloss.Color(commitsListColor))
+
+	branchListDel := defaultDelegate(lipgloss.Color(branchListColor))
 
 	baseStyle = lipgloss.NewStyle().
 		PaddingLeft(1).
@@ -22,7 +24,8 @@ func InitialModel(config Config) model {
 
 	m := model{
 		config:          config,
-		commitsList:     list.New(nil, appDelegate, 0, 0),
+		commitsList:     list.New(nil, commitListDel, 0, 0),
+		branchList:      list.New(nil, branchListDel, 0, 0),
 		commitListStyle: tableListStyle,
 		showHelp:        true,
 	}
@@ -35,6 +38,14 @@ func InitialModel(config Config) model {
 	m.commitsList.Styles.Title.Foreground(lipgloss.Color(defaultBackgroundColor))
 	m.commitsList.Styles.Title.Background(lipgloss.Color(commitsListColor))
 	m.commitsList.Styles.Title.Bold(true)
+
+	m.branchList.Title = "Branches"
+	m.branchList.SetStatusBarItemName("branch", "branches")
+	m.branchList.DisableQuitKeybindings()
+	m.branchList.SetShowHelp(false)
+	m.branchList.Styles.Title.Foreground(lipgloss.Color(defaultBackgroundColor))
+	m.branchList.Styles.Title.Background(lipgloss.Color(branchListColor))
+	m.branchList.Styles.Title.Bold(true)
 
 	return m
 }

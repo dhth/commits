@@ -1,6 +1,9 @@
 package ui
 
-import "github.com/go-git/go-git/v5/plumbing/object"
+import (
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/object"
+)
 
 type hideHelpMsg struct{}
 
@@ -15,7 +18,13 @@ type repoInfoFetchedMsg struct {
 
 type commitsFetched struct {
 	commits []*object.Commit
+	ref     *plumbing.Reference
 	err     error
+}
+
+type branchesFetched struct {
+	branches []*plumbing.Reference
+	err      error
 }
 
 type showDiffFinished struct {
@@ -25,11 +34,6 @@ type showDiffFinished struct {
 type showCommitInEditorFinished struct {
 	hash string
 	err  error
-}
-
-type currentRevFetchedMsg struct {
-	rev string
-	err error
 }
 
 type urlOpenedinBrowserMsg struct {
