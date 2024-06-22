@@ -30,12 +30,12 @@ var (
 			PaddingRight(1).
 			Foreground(lipgloss.Color(defaultBackgroundColor))
 
-	modeStyle = baseStyle.Copy().
+	modeStyle = baseStyle.
 			Align(lipgloss.Center).
 			Bold(true).
 			Background(lipgloss.Color(modeColor))
 
-	helpMsgStyle = baseStyle.Copy().
+	helpMsgStyle = baseStyle.
 			Bold(true).
 			Foreground(lipgloss.Color(helpMsgColor))
 
@@ -48,7 +48,7 @@ var (
 	commitDetailsStyle = lipgloss.NewStyle().
 				PaddingLeft(2)
 
-	commitStatsTitleStyle = baseStyle.Copy().
+	commitStatsTitleStyle = baseStyle.
 				Bold(true).
 				Background(lipgloss.Color(commitStatsTitleColor)).
 				Align(lipgloss.Left)
@@ -102,7 +102,7 @@ var (
 			PaddingRight(1).
 			Foreground(lipgloss.Color(revChoiceColor))
 
-	helpVPTitleStyle = baseStyle.Copy().
+	helpVPTitleStyle = baseStyle.
 				Bold(true).
 				Background(lipgloss.Color(helpViewTitleColor)).
 				Align(lipgloss.Left)

@@ -34,7 +34,6 @@ type model struct {
 	revEndChosen       bool
 	revStartIndex      int
 	revStart           string
-	revEndIndex        int
 	revEnd             string
 	activePane         Pane
 	lastPane           Pane

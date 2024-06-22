@@ -16,7 +16,7 @@ func InitialModel(config Config) model {
 		PaddingRight(1).
 		Foreground(lipgloss.Color(defaultBackgroundColor))
 
-	tableListStyle := baseStyle.Copy().
+	tableListStyle := baseStyle.
 		PaddingTop(1).
 		PaddingRight(2).
 		PaddingLeft(1).
@@ -35,17 +35,17 @@ func InitialModel(config Config) model {
 	m.commitsList.DisableQuitKeybindings()
 	m.commitsList.SetShowHelp(false)
 	m.commitsList.SetFilteringEnabled(false)
-	m.commitsList.Styles.Title.Foreground(lipgloss.Color(defaultBackgroundColor))
-	m.commitsList.Styles.Title.Background(lipgloss.Color(commitsListColor))
-	m.commitsList.Styles.Title.Bold(true)
+	m.commitsList.Styles.Title = m.commitsList.Styles.Title.Foreground(lipgloss.Color(defaultBackgroundColor)).
+		Background(lipgloss.Color(commitsListColor)).
+		Bold(true)
 
 	m.branchList.Title = "Branches"
 	m.branchList.SetStatusBarItemName("branch", "branches")
 	m.branchList.DisableQuitKeybindings()
 	m.branchList.SetShowHelp(false)
-	m.branchList.Styles.Title.Foreground(lipgloss.Color(defaultBackgroundColor))
-	m.branchList.Styles.Title.Background(lipgloss.Color(branchListColor))
-	m.branchList.Styles.Title.Bold(true)
+	m.branchList.Styles.Title = m.branchList.Styles.Title.Foreground(lipgloss.Color(defaultBackgroundColor)).
+		Background(lipgloss.Color(branchListColor)).
+		Bold(true)
 
 	return m
 }

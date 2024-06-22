@@ -7,10 +7,6 @@ import (
 
 type hideHelpMsg struct{}
 
-type tableChosenMsg struct {
-	tableName string
-}
-
 type repoInfoFetchedMsg struct {
 	info repoInfo
 	err  error
@@ -37,6 +33,5 @@ type showCommitInEditorFinished struct {
 }
 
 type urlOpenedinBrowserMsg struct {
-	url string
 	err error
 }

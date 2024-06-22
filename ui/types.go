@@ -19,7 +19,6 @@ type branchItem struct {
 
 type repoInfo struct {
 	remoteURLs []string
-	err        error
 }
 
 func (commit Commit) Title() string {
