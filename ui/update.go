@@ -133,6 +133,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.activePane = commitsList
 			}
 		case "?":
+			if m.activePane == helpView {
+				break
+			}
 			m.lastPane = m.activePane
 			m.activePane = helpView
 		}
