@@ -6,7 +6,6 @@ import (
 )
 
 func InitialModel(config Config) model {
-
 	commitListDel := defaultDelegate(lipgloss.Color(commitsListColor))
 
 	branchListDel := defaultDelegate(lipgloss.Color(branchListColor))

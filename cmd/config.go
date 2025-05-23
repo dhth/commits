@@ -10,7 +10,6 @@ type cliConfig struct {
 }
 
 func readConfig(filePath string) (cliConfig, error) {
-
 	var config cliConfig
 	_, err := toml.DecodeFile(filePath, &config)
 	if err != nil {
@@ -18,5 +17,4 @@ func readConfig(filePath string) (cliConfig, error) {
 	}
 
 	return config, nil
-
 }

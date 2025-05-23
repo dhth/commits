@@ -25,18 +25,16 @@ func hideHelp(interval time.Duration) tea.Cmd {
 
 func getCommits(repo *git.Repository, ref *plumbing.Reference) tea.Cmd {
 	return func() tea.Msg {
-
 		var err error
 		if ref == nil {
 			ref, err = repo.Head()
 			if err != nil {
-				return commitsFetched{err: fmt.Errorf("Couldn't get HEAD: %s", err.Error())}
+				return commitsFetched{err: fmt.Errorf("couldn't get HEAD: %s", err.Error())}
 			}
 		}
 
 		since := time.Now().Add(-time.Hour * commitsSinceHours)
 		cIter, err := repo.Log(&git.LogOptions{From: ref.Hash(), Since: &since, All: false})
-
 		if err != nil {
 			return commitsFetched{err: err}
 		}
@@ -55,10 +53,9 @@ func getCommits(repo *git.Repository, ref *plumbing.Reference) tea.Cmd {
 
 func getBranches(repo *git.Repository) tea.Cmd {
 	return func() tea.Msg {
-
 		branches, err := repo.Branches()
 		if err != nil {
-			return branchesFetched{err: fmt.Errorf("Couldn't get branches: %s", err.Error())}
+			return branchesFetched{err: fmt.Errorf("couldn't get branches: %s", err.Error())}
 		}
 
 		var bRefs []*plumbing.Reference
@@ -94,7 +91,6 @@ func showCommit(path string, hash string) tea.Cmd {
 }
 
 func (m model) showGitLog() tea.Cmd {
-
 	hashWidth := m.terminalWidth / 10
 	messageWidth := m.terminalWidth / 2
 	dateWidth := m.terminalWidth / 6
