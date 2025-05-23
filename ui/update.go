@@ -18,6 +18,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
+			//nolint:staticcheck
 			if m.activePane == commitsList {
 				return m, tea.Quit
 			} else if m.activePane == helpView {
@@ -123,6 +124,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			}
 		case "tab", "shift+tab":
+			//nolint:staticcheck
 			if m.activePane == commitsList {
 				commit, ok := m.commitsList.SelectedItem().(Commit)
 				if ok {
@@ -153,7 +155,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		if !m.commitStatsVPReady {
 			m.commitDetailsVP = viewport.New(msg.Width, msg.Height-7)
-			m.commitDetailsVP.HighPerformanceRendering = false
 			m.commitStatsVPReady = true
 		} else {
 			m.commitDetailsVP.Width = msg.Width
@@ -162,7 +163,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		if !m.helpVPReady {
 			m.helpVP = viewport.New(msg.Width, msg.Height-7)
-			m.helpVP.HighPerformanceRendering = false
 			m.helpVP.SetContent(helpText)
 			m.helpVPReady = true
 		} else {
@@ -200,7 +200,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						Commit: commit,
 					})
 				}
-
 			}
 			m.commitsList.SetItems(commits)
 			m.commitsList.ResetSelected()
