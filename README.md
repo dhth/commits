@@ -1,7 +1,10 @@
-# commits
-
-✨ Overview
----
+<p align="center">
+  <h1 align="center">commits</h1>
+  <p align="center">
+    <a href="https://github.com/dhth/commits/actions/workflows/main.yml"><img alt="build status" src="https://img.shields.io/github/actions/workflow/status/dhth/commits/main.yml?style=flat-square"></a>
+    <a href="https://github.com/dhth/commits/actions/workflows/vulncheck.yml"><img alt="vuln check" src="https://img.shields.io/github/actions/workflow/status/dhth/commits/vulncheck.yml?style=flat-square&label=vulncheck"></a>
+  </p>
+</p>
 
 `commits` lets you glance at git commits through a simple TUI.
 
