@@ -1,6 +1,6 @@
 module github.com/dhth/commits
 
-go 1.25.0
+go 1.25.2
 
 require (
 	github.com/BurntSushi/toml v1.5.0
