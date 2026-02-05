@@ -46,7 +46,7 @@ var (
 			PaddingBottom(1)
 
 	commitDetailsStyle = lipgloss.NewStyle().
-				PaddingLeft(2)
+				PaddingLeft(1)
 
 	commitStatsTitleStyle = baseStyle.
 				Bold(true).

@@ -18,7 +18,7 @@ func InitialModel(config Config) model {
 	tableListStyle := baseStyle.
 		PaddingTop(1).
 		PaddingRight(2).
-		PaddingLeft(1).
+		PaddingLeft(0).
 		PaddingBottom(1)
 
 	m := model{
