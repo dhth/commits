@@ -20,7 +20,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c":
 			return m, tea.Quit
 		case "q", "esc":
-			//nolint:staticcheck
 			switch m.activePane {
 			case commitsList:
 				return m, tea.Quit
@@ -127,7 +126,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			}
 		case "tab", "shift+tab":
-			//nolint:staticcheck
 			switch m.activePane {
 			case commitsList:
 				commit, ok := m.commitsList.SelectedItem().(Commit)
