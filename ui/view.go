@@ -11,11 +11,6 @@ func (m model) View() string {
 	var footer string
 
 	var statusBar string
-	if m.revStartChosen && !m.revEndChosen {
-		statusBar += "picking revision range: " + revChoiceStyle.Render(fmt.Sprintf("%s..?", m.revStart))
-	} else if m.revEndChosen {
-		statusBar += "revision range picked:  " + revChoiceStyle.Render(fmt.Sprintf("%s..%s", m.revStart, m.revEnd))
-	}
 	if m.message != "" {
 		statusBar += RightPadTrim(m.message, m.terminalWidth)
 	}
@@ -61,10 +56,18 @@ func (m model) View() string {
 		helpMsg = " " + helpMsgStyle.Render("press ? for help")
 	}
 
-	footerStr := fmt.Sprintf("%s%s%s",
+	var revisionRange string
+	if m.revStartChosen && !m.revEndChosen {
+		revisionRange = " " + revChoiceStyle.Render(fmt.Sprintf("%s..?", m.revStart))
+	} else if m.revEndChosen {
+		revisionRange = " " + revChoiceStyle.Render(fmt.Sprintf("%s..%s", m.revStart, m.revEnd))
+	}
+
+	footerStr := fmt.Sprintf("%s%s%s%s",
 		modeStyle.Render("commits"),
 		headRef,
 		helpMsg,
+		revisionRange,
 	)
 	footer = footerStyle.Render(footerStr)
 
