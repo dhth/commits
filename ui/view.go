@@ -26,9 +26,9 @@ func (m model) View() string {
 	case commitDetails:
 		var commitStatsVP string
 		if !m.commitStatsVPReady {
-			commitStatsVP = "\n  Initializing..."
+			commitStatsVP = "\n Initializing..."
 		} else {
-			commitStatsVP = viewPortStyle.Render(fmt.Sprintf("  %s\n\n%s\n",
+			commitStatsVP = viewPortStyle.Render(fmt.Sprintf(" %s\n\n%s\n",
 				commitStatsTitleStyle.Render("Commit Details"),
 				commitDetailsStyle.Render(m.commitDetailsVP.View())))
 		}
@@ -38,9 +38,9 @@ func (m model) View() string {
 	case helpView:
 		var helpVP string
 		if !m.helpVPReady {
-			helpVP = "\n  Initializing..."
+			helpVP = "\n Initializing..."
 		} else {
-			helpVP = viewPortStyle.Render(fmt.Sprintf("  %s\n\n%s\n",
+			helpVP = viewPortStyle.Render(fmt.Sprintf(" %s\n\n%s\n",
 				helpVPTitleStyle.Render("Help"),
 				m.helpVP.View()))
 		}
