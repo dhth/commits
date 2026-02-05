@@ -22,7 +22,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "esc":
 			switch m.activePane {
 			case commitsList:
-				return m, tea.Quit
+				if m.revEndChosen {
+					m.revEndChosen = false
+					m.revEnd = ""
+				} else if m.revStartChosen {
+					m.revStartChosen = false
+					m.revStart = ""
+					m.revStartIndex = 0
+				} else {
+					return m, tea.Quit
+				}
 			case helpView:
 				m.activePane = m.lastPane
 			case branchList:
