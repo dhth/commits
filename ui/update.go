@@ -89,7 +89,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.revStart = m.commitsList.SelectedItem().FilterValue()[:10]
 					m.revStartChosen = true
 					m.revStartIndex = m.commitsList.Index()
-				} else if !m.revEndChosen {
+				} else {
 					if m.commitsList.Index() >= m.revStartIndex {
 						m.message = "End revision cannot be before start revision"
 					} else {
