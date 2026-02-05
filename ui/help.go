@@ -30,21 +30,23 @@ var helpText = fmt.Sprintf(`
 	helpHeaderStyle.Render("General"),
 	helpSectionStyle.Render(`
      <tab>                           Switch focus between Commit List View and Commit Details View
-     <ctrl+d>                        Open commit/revision range in your text editor (depends
+     <ctrl+e>                        Open commit/revision range in your text editor (depends
                                      on editor_command in your config file)
      <ctrl+x>                        Clear revision range selection
      <ctrl+b>                        Change branch
+     <esc>/q                         Go back or quit
+     <ctrl+c>                        Quit immediately
      ?                               Show help view
 `),
 	helpHeaderStyle.Render("Commit List View"),
 	helpSectionStyle.Render(`
-     <enter>                         Show commit/revision range
+     <enter>/<space>                 Show commit/revision range
      <ctrl+t>                        Choose revision range start/end
      <ctrl+p>                        Show git log
 `),
 	helpHeaderStyle.Render("Commit Details View"),
 	helpSectionStyle.Render(`
-     <enter>                         Show commit/revision range
+     <enter>/<space>                 Show commit/revision range
      h/[                             Go to previous commit
      l/]                             Go to next commit
 `),

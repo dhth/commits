@@ -17,22 +17,24 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "ctrl+c", "q":
-			//nolint:staticcheck
-			if m.activePane == commitsList {
+		case "ctrl+c":
+			return m, tea.Quit
+		case "q", "esc":
+			switch m.activePane {
+			case commitsList:
 				return m, tea.Quit
-			} else if m.activePane == helpView {
+			case helpView:
 				m.activePane = m.lastPane
-			} else if m.activePane == branchList {
+			case branchList:
 				if m.branchList.FilterState() != list.Filtering {
 					m.branchList.ResetFilter()
 					m.activePane = m.lastPane
 				}
-			} else if m.activePane == commitDetails {
+			case commitDetails:
 				m.commitDetailsVP.GotoTop()
 				m.activePane = commitsList
 			}
-		case "enter":
+		case "enter", " ":
 			switch m.activePane {
 			case commitsList, commitDetails:
 				if m.revEndChosen {
@@ -57,7 +59,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case commitsList:
 				cmds = append(cmds, m.showGitLog())
 			}
-		case "ctrl+d":
+		case "ctrl+e":
 			if m.config.OpenInEditorCmd != nil {
 				switch m.activePane {
 				case commitsList, commitDetails:
@@ -124,14 +126,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			}
 		case "tab", "shift+tab":
-			//nolint:staticcheck
-			if m.activePane == commitsList {
+			switch m.activePane {
+			case commitsList:
 				commit, ok := m.commitsList.SelectedItem().(Commit)
 				if ok {
 					m.commitDetailsVP.SetContent(commit.renderStats())
 					m.activePane = commitDetails
 				}
-			} else if m.activePane == commitDetails {
+			case commitDetails:
 				m.activePane = commitsList
 			}
 		case "?":
