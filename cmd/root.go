@@ -60,33 +60,28 @@ func Execute() {
 		die("Couldn't get current working directory: %s", err.Error())
 	}
 
-	cfg, err := readConfig(configFPExpanded)
+	rawCfg, err := readConfig(configFPExpanded)
 	if err != nil {
 		die(cfgErrSuggestion(fmt.Sprintf("Error reading config: %s", err.Error())))
 	}
 
-	var ig string
-
 	if *ignorePattern != "" {
-		ig = *ignorePattern
-	} else if cfg.IgnorePattern != nil {
-		ig = *cfg.IgnorePattern
+		rawCfg.IgnorePattern = ignorePattern
 	}
 
-	r, err := git.PlainOpenWithOptions(repoPath, &git.PlainOpenOptions{
+	config, err := ui.NewConfig(rawCfg)
+	if err != nil {
+		die(cfgErrSuggestion(fmt.Sprintf("Invalid config: %s", err.Error())))
+	}
+
+	repo, err := git.PlainOpenWithOptions(repoPath, &git.PlainOpenOptions{
 		DetectDotGit: true,
 	})
 	if err != nil {
 		die("Couldn't fetch git repo: %s", err.Error())
 	}
 
-	config := ui.Config{
-		IgnorePattern:   ig,
-		OpenInEditorCmd: cfg.EditorCmd,
-		Repo:            r,
-	}
-
-	ui.RenderUI(config)
+	ui.RenderUI(repo, config)
 }
 
 func expandTilde(path string) (string, error) {

@@ -1,19 +1,20 @@
 package cmd
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/BurntSushi/toml"
+	"github.com/dhth/commits/ui"
 )
 
-type cliConfig struct {
-	IgnorePattern *string  `toml:"ignore_pattern"`
-	EditorCmd     []string `toml:"editor_command"`
-}
+var errCouldntReadConfigFile = errors.New("couldn't read config file")
 
-func readConfig(filePath string) (cliConfig, error) {
-	var config cliConfig
+func readConfig(filePath string) (ui.RawConfig, error) {
+	var config ui.RawConfig
 	_, err := toml.DecodeFile(filePath, &config)
 	if err != nil {
-		return config, err
+		return config, fmt.Errorf("%w: %w", errCouldntReadConfigFile, err)
 	}
 
 	return config, nil

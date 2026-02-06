@@ -2,7 +2,6 @@ package ui
 
 import (
 	"fmt"
-	"log"
 	"os/exec"
 	"strings"
 	"time"
@@ -70,23 +69,50 @@ func getBranches(repo *git.Repository) tea.Cmd {
 	}
 }
 
-func showRevisionRange(revisionRange string) tea.Cmd {
-	c := exec.Command("git", "diff", revisionRange)
-	return tea.ExecProcess(c, func(err error) tea.Msg {
-		if err != nil {
-			return showDiffFinished{err}
+func showCommit(cmd []string, hash string) tea.Cmd {
+	var c *exec.Cmd
+
+	if len(cmd) == 0 {
+		c = exec.Command("git", "show", hash)
+	} else {
+		cmdRep := make([]string, 0, len(cmd))
+		for _, word := range cmd {
+			if strings.Contains(word, "{{hash}}") {
+				cmdRep = append(cmdRep, strings.ReplaceAll(word, "{{hash}}", hash))
+			} else {
+				cmdRep = append(cmdRep, word)
+			}
 		}
-		return tea.Msg(showDiffFinished{})
+		c = exec.Command(cmdRep[0], cmdRep[1:]...)
+	}
+
+	return tea.ExecProcess(c, func(err error) tea.Msg {
+		return tea.Msg(showDiffFinished{err})
 	})
 }
 
-func showCommit(hash string) tea.Cmd {
-	c := exec.Command("git", "show", hash)
-	return tea.ExecProcess(c, func(err error) tea.Msg {
-		if err != nil {
-			return showDiffFinished{err}
+func showRange(cmd []string, base string, head string) tea.Cmd {
+	var c *exec.Cmd
+
+	if len(cmd) == 0 {
+		c = exec.Command("git", "diff", fmt.Sprintf("%s..%s", base, head))
+	} else {
+		cmdRep := make([]string, 0, len(cmd))
+		for _, word := range cmd {
+			replaced := word
+			if strings.Contains(word, "{{base}}") {
+				replaced = strings.ReplaceAll(replaced, "{{base}}", base)
+			}
+			if strings.Contains(word, "{{head}}") {
+				replaced = strings.ReplaceAll(replaced, "{{head}}", head)
+			}
+			cmdRep = append(cmdRep, replaced)
 		}
-		return tea.Msg(showDiffFinished{})
+		c = exec.Command(cmdRep[0], cmdRep[1:]...)
+	}
+
+	return tea.ExecProcess(c, func(err error) tea.Msg {
+		return showDiffFinished{err}
 	})
 }
 
@@ -112,23 +138,40 @@ func (m model) showGitLog() tea.Cmd {
 	})
 }
 
-func openRevisionRangeInEditor(command []string, revisionRange string) tea.Cmd {
-	cmdRep := make([]string, 0)
-	for _, word := range command {
-		if strings.Contains(word, "{{revision}}") {
-			cmdRep = append(cmdRep, strings.Replace(word, "{{revision}}", revisionRange, 1))
+func openCommit(cmd []string, hash string) tea.Cmd {
+	cmdRep := make([]string, 0, len(cmd))
+	for _, word := range cmd {
+		if strings.Contains(word, "{{hash}}") {
+			cmdRep = append(cmdRep, strings.ReplaceAll(word, "{{hash}}", hash))
 		} else {
 			cmdRep = append(cmdRep, word)
 		}
 	}
 
-	log.Printf("%#v", cmdRep)
 	c := exec.Command(cmdRep[0], cmdRep[1:]...)
 
 	return tea.ExecProcess(c, func(err error) tea.Msg {
-		if err != nil {
-			return showCommitInEditorFinished{err: err}
+		return tea.Msg(showCommitInEditorFinished{hash: hash, err: err})
+	})
+}
+
+func openRange(cmd []string, base string, head string) tea.Cmd {
+	cmdRep := make([]string, 0, len(cmd))
+	for _, word := range cmd {
+		replaced := word
+		if strings.Contains(word, "{{base}}") {
+			replaced = strings.ReplaceAll(replaced, "{{base}}", base)
 		}
-		return tea.Msg(showCommitInEditorFinished{hash: revisionRange})
+		if strings.Contains(word, "{{head}}") {
+			replaced = strings.ReplaceAll(replaced, "{{head}}", head)
+		}
+		cmdRep = append(cmdRep, replaced)
+	}
+
+	rangeStr := fmt.Sprintf("%s..%s", base, head)
+	c := exec.Command(cmdRep[0], cmdRep[1:]...)
+
+	return tea.ExecProcess(c, func(err error) tea.Msg {
+		return showCommitInEditorFinished{hash: rangeStr, err: err}
 	})
 }

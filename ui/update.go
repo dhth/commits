@@ -54,10 +54,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 				if m.revEnd != nil {
-					cmds = append(cmds, showRevisionRange(fmt.Sprintf("%s..%s", *m.revStart, *m.revEnd)))
+					cmds = append(cmds, showRange(m.config.ShowRangeCmd, *m.revStart, *m.revEnd))
 				} else {
 					hash := m.commitsList.SelectedItem().FilterValue()
-					cmds = append(cmds, showCommit(hash))
+					cmds = append(cmds, showCommit(m.config.ShowCommitCmd, hash))
 				}
 			case branchList:
 				bItem, ok := m.branchList.SelectedItem().(branchItem)
@@ -67,7 +67,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						m.revEnd = nil
 						m.revStartIndex = 0
 						m.updateCommitDelegate()
-						cmds = append(cmds, getCommits(m.config.Repo, bItem.branch))
+						cmds = append(cmds, getCommits(m.repo, bItem.branch))
 					} else {
 						m.activePane = commitsList
 					}
@@ -80,23 +80,29 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				cmds = append(cmds, m.showGitLog())
 			}
 		case "ctrl+e":
-			if m.config.OpenInEditorCmd != nil {
-				switch m.activePane {
-				case commitsList, commitDetails:
-					if len(m.commitsList.Items()) == 0 {
-						m.message = "No commits to open"
+			switch m.activePane {
+			case commitsList, commitDetails:
+				if len(m.commitsList.Items()) == 0 {
+					m.message = "No commits to open"
+					break
+				}
+
+				if m.revEnd != nil {
+					if len(m.config.OpenRangeCmd) == 0 {
+						m.message = "open_range_command is not configured"
 						break
 					}
 
-					if m.revEnd != nil {
-						cmds = append(cmds, openRevisionRangeInEditor(m.config.OpenInEditorCmd, fmt.Sprintf("%s..%s", *m.revStart, *m.revEnd)))
-					} else {
-						hash := m.commitsList.SelectedItem().FilterValue()
-						cmds = append(cmds, openRevisionRangeInEditor(m.config.OpenInEditorCmd, fmt.Sprintf("%s~1..%s", hash, hash)))
+					cmds = append(cmds, openRange(m.config.OpenRangeCmd, *m.revStart, *m.revEnd))
+				} else {
+					if len(m.config.OpenCommitCmd) == 0 {
+						m.message = "open_commit_command is not configured"
+						break
 					}
+
+					hash := m.commitsList.SelectedItem().FilterValue()
+					cmds = append(cmds, openCommit(m.config.OpenCommitCmd, hash))
 				}
-			} else {
-				m.message = "editor_command is not configured"
 			}
 		case "ctrl+t":
 			switch m.activePane {
@@ -131,12 +137,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+r":
 			switch m.activePane {
 			case commitsList:
-				cmds = append(cmds, getCommits(m.config.Repo, m.currentRef))
+				cmds = append(cmds, getCommits(m.repo, m.currentRef))
 			}
 		case "ctrl+b":
 			switch m.activePane {
 			case commitsList, commitDetails:
-				cmds = append(cmds, getBranches(m.config.Repo))
+				cmds = append(cmds, getBranches(m.repo))
 			}
 		case "[", "h":
 			switch m.activePane {

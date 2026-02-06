@@ -30,8 +30,7 @@ var helpText = fmt.Sprintf(`
 	helpHeaderStyle.Render("General"),
 	helpSectionStyle.Render(`
      <tab>                           Switch focus between Commit List View and Commit Details View
-     <ctrl+e>                        Open commit/revision range in your text editor (depends
-                                     on editor_command in your config file)
+     <ctrl+e>                        Open commit/revision range
      <ctrl+x>                        Clear revision range selection
      <ctrl+b>                        Change branch
      <esc>/q                         Go back or quit

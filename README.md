@@ -37,13 +37,26 @@ config file. The default location for this config file is
 # commit messages that match "ignore_pattern" will not be shown in the TUI list
 ignore_pattern = '^\[regex\]'
 
-# editor_command is run when you press ctrl+d; {{revision}} is replaced at
-# runtime with a revision range
-editor_command = [ "nvim", "-c", ":DiffviewOpen {{revision}}" ]
+# show_commit_command is run when you press enter/space on a single commit;
+# {{hash}} is replaced at runtime with the commit hash
+# (defaults to "git show {{hash}}" if not set)
+show_commit_command = [ "git", "show", "{{hash}}" ]
+
+# show_range_command is run when you press enter/space on a revision range;
+# {{base}} and {{head}} are replaced at runtime
+# (defaults to "git diff {{base}}..{{head}}" if not set)
+show_range_command = [ "git", "diff", "{{base}}..{{head}}" ]
+
+# open_commit_command is run when you press ctrl+e on a single commit;
+# {{hash}} is replaced at runtime with the commit hash
+open_commit_command = [ "nvim", "-c", ":DiffviewOpen {{hash}}~1..{{hash}}" ]
+
+# open_range_command is run when you press ctrl+e on a revision range;
+# {{base}} and {{head}} are replaced at runtime
+open_range_command = [ "nvim", "-c", ":DiffviewOpen {{base}}..{{head}}" ]
 ```
 
 ```bash
-commits -path='/path/to/git/repo'
 commits -ignore-pattern='^\[regex\]'
 commits -config-file-path='/path/to/config/file.toml'
 ```
@@ -65,21 +78,20 @@ Keyboard Shortcuts
    General
 
        <tab>                           Switch focus between Commit List View and Commit Details View
-       <ctrl+d>                        Open commit/revision range in your text editor (depends
-                                       on editor_command in your config file)
+       <ctrl+e>                        Open commit/revision range
        <ctrl+x>                        Clear revision range selection
        <ctrl+b>                        Change branch
        ?                               Show help view
 
    Commit List View
 
-       <enter>                         Show commit/revision range
+       <enter>/<space>                 Show commit/revision range
        <ctrl+t>                        Choose revision range start/end
        <ctrl+p>                        Show git log
 
    Commit Details View
 
-       <enter>                         Show commit/revision range
+       <enter>/<space>                 Show commit/revision range
        h/[                             Go to previous commit
        l/]                             Go to next commit
 

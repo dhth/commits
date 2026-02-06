@@ -7,6 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 )
 
@@ -20,6 +21,7 @@ const (
 )
 
 type model struct {
+	repo               *git.Repository
 	config             Config
 	repoInfo           repoInfo
 	commitsList        list.Model
@@ -45,6 +47,6 @@ type model struct {
 func (m model) Init() tea.Cmd {
 	return tea.Batch(
 		hideHelp(time.Minute*2),
-		getCommits(m.config.Repo, nil),
+		getCommits(m.repo, nil),
 	)
 }

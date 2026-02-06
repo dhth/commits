@@ -3,9 +3,10 @@ package ui
 import (
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/go-git/go-git/v5"
 )
 
-func InitialModel(config Config) model {
+func InitialModel(repo *git.Repository, config Config) model {
 	branchListDel := defaultDelegate(lipgloss.Color(branchListColor))
 
 	baseStyle = lipgloss.NewStyle().
@@ -22,6 +23,7 @@ func InitialModel(config Config) model {
 	commitListDel := newCommitDelegate(lipgloss.Color(commitsListColor))
 
 	m := model{
+		repo:            repo,
 		config:          config,
 		commitsListDel:  commitListDel,
 		commitsList:     list.New(nil, commitListDel, 0, 0),
