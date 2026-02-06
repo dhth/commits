@@ -23,6 +23,7 @@ type model struct {
 	config             Config
 	repoInfo           repoInfo
 	commitsList        list.Model
+	commitsListDel     commitDelegate
 	currentRef         *plumbing.Reference
 	message            string
 	branchList         list.Model
@@ -30,11 +31,9 @@ type model struct {
 	terminalHeight     int
 	terminalWidth      int
 	commitDetailsVP    viewport.Model
-	revStartChosen     bool
-	revEndChosen       bool
 	revStartIndex      int
-	revStart           string
-	revEnd             string
+	revStart           *string
+	revEnd             *string
 	activePane         Pane
 	lastPane           Pane
 	commitStatsVPReady bool
