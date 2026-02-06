@@ -58,9 +58,9 @@ func (m model) View() string {
 
 	var revisionRange string
 	if m.revStart != nil && m.revEnd == nil {
-		revisionRange = " " + revChoiceStyle.Render(fmt.Sprintf("%s..?", *m.revStart))
+		revisionRange = " " + revChoiceStyle.Render(fmt.Sprintf("%s..?", shortenHash(*m.revStart)))
 	} else if m.revEnd != nil {
-		revisionRange = " " + revChoiceStyle.Render(fmt.Sprintf("%s..%s", *m.revStart, *m.revEnd))
+		revisionRange = " " + revChoiceStyle.Render(fmt.Sprintf("%s..%s", shortenHash(*m.revStart), shortenHash(*m.revEnd)))
 	}
 
 	footerStr := fmt.Sprintf("%s%s%s%s",
@@ -76,4 +76,12 @@ func (m model) View() string {
 		statusBar,
 		footer,
 	)
+}
+
+func shortenHash(hash string) string {
+	if len(hash) >= 10 {
+		return hash[:10]
+	}
+
+	return hash
 }

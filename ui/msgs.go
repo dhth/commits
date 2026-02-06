@@ -31,7 +31,3 @@ type showCommitInEditorFinished struct {
 	hash string
 	err  error
 }
-
-type urlOpenedinBrowserMsg struct {
-	err error
-}
