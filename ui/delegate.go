@@ -49,7 +49,7 @@ func (d commitDelegate) Render(w io.Writer, m list.Model, index int, item list.I
 		return
 	}
 
-	hash := commit.FilterValue()[:10]
+	hash := commit.FilterValue()
 
 	var titleStyle, descStyle lipgloss.Style
 

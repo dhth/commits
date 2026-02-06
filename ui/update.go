@@ -107,7 +107,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 				if m.revStart == nil {
-					hash := m.commitsList.SelectedItem().FilterValue()[:10]
+					hash := m.commitsList.SelectedItem().FilterValue()
 					m.revStart = &hash
 					m.revStartIndex = m.commitsList.Index()
 					m.updateCommitDelegate()
@@ -115,7 +115,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if m.commitsList.Index() >= m.revStartIndex {
 						m.message = "End revision cannot be before start revision"
 					} else {
-						hash := m.commitsList.SelectedItem().FilterValue()[:10]
+						hash := m.commitsList.SelectedItem().FilterValue()
 						m.revEnd = &hash
 						m.updateCommitDelegate()
 					}
@@ -258,10 +258,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.branchList.SetItems(branches)
 			m.branchList.ResetSelected()
 			m.activePane = branchList
-		}
-	case urlOpenedinBrowserMsg:
-		if msg.err == nil {
-			m.message = msg.err.Error()
 		}
 	}
 

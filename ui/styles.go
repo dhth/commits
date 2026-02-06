@@ -15,7 +15,6 @@ const (
 	commitStatsTitleColor  = "#d3869b"
 	hashColor              = "#d3869b"
 	dateColor              = "#928374"
-	commitMsgColor         = "#ffb703"
 	commitStatsColor       = "#a2d2ff"
 	headRefColor           = "#d3869b"
 	revChoiceColor         = "#8ec07c"
