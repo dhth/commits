@@ -54,10 +54,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 
 				if m.revEnd != nil {
-					cmds = append(cmds, showRevisionRange(m.config.Path, fmt.Sprintf("%s..%s", *m.revStart, *m.revEnd)))
+					cmds = append(cmds, showRevisionRange(fmt.Sprintf("%s..%s", *m.revStart, *m.revEnd)))
 				} else {
 					hash := m.commitsList.SelectedItem().FilterValue()
-					cmds = append(cmds, showCommit(m.config.Path, hash))
+					cmds = append(cmds, showCommit(hash))
 				}
 			case branchList:
 				bItem, ok := m.branchList.SelectedItem().(branchItem)
