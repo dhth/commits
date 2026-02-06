@@ -14,6 +14,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 	m.message = ""
 
+	m.ensureInvariantsHold()
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -22,13 +24,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "esc":
 			switch m.activePane {
 			case commitsList:
-				if m.revEndChosen {
-					m.revEndChosen = false
-					m.revEnd = ""
-				} else if m.revStartChosen {
-					m.revStartChosen = false
-					m.revStart = ""
+				if m.revEnd != nil {
+					m.revEnd = nil
+					m.updateCommitDelegate()
+				} else if m.revStart != nil {
+					m.revStart = nil
 					m.revStartIndex = 0
+					m.updateCommitDelegate()
 				} else {
 					return m, tea.Quit
 				}
@@ -46,8 +48,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter", " ":
 			switch m.activePane {
 			case commitsList, commitDetails:
-				if m.revEndChosen {
-					cmds = append(cmds, showRevisionRange(m.config.Path, fmt.Sprintf("%s..%s", m.revStart, m.revEnd)))
+				if len(m.commitsList.Items()) == 0 {
+					m.message = "No commits to show"
+					break
+				}
+
+				if m.revEnd != nil {
+					cmds = append(cmds, showRevisionRange(m.config.Path, fmt.Sprintf("%s..%s", *m.revStart, *m.revEnd)))
 				} else {
 					hash := m.commitsList.SelectedItem().FilterValue()
 					cmds = append(cmds, showCommit(m.config.Path, hash))
@@ -56,6 +63,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				bItem, ok := m.branchList.SelectedItem().(branchItem)
 				if ok {
 					if bItem.branch.Name().String() != m.currentRef.Name().String() {
+						m.revStart = nil
+						m.revEnd = nil
+						m.revStartIndex = 0
+						m.updateCommitDelegate()
 						cmds = append(cmds, getCommits(m.config.Repo, bItem.branch))
 					} else {
 						m.activePane = commitsList
@@ -72,8 +83,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.config.OpenInEditorCmd != nil {
 				switch m.activePane {
 				case commitsList, commitDetails:
-					if m.revEndChosen {
-						cmds = append(cmds, openRevisionRangeInEditor(m.config.OpenInEditorCmd, fmt.Sprintf("%s..%s", m.revStart, m.revEnd)))
+					if len(m.commitsList.Items()) == 0 {
+						m.message = "No commits to open"
+						break
+					}
+
+					if m.revEnd != nil {
+						cmds = append(cmds, openRevisionRangeInEditor(m.config.OpenInEditorCmd, fmt.Sprintf("%s..%s", *m.revStart, *m.revEnd)))
 					} else {
 						hash := m.commitsList.SelectedItem().FilterValue()
 						cmds = append(cmds, openRevisionRangeInEditor(m.config.OpenInEditorCmd, fmt.Sprintf("%s~1..%s", hash, hash)))
@@ -85,24 +101,32 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+t":
 			switch m.activePane {
 			case commitsList:
-				if !m.revStartChosen {
-					m.revStart = m.commitsList.SelectedItem().FilterValue()[:10]
-					m.revStartChosen = true
+				if len(m.commitsList.Items()) == 0 {
+					m.message = "No commits to select"
+					break
+				}
+
+				if m.revStart == nil {
+					hash := m.commitsList.SelectedItem().FilterValue()[:10]
+					m.revStart = &hash
 					m.revStartIndex = m.commitsList.Index()
+					m.updateCommitDelegate()
 				} else {
 					if m.commitsList.Index() >= m.revStartIndex {
 						m.message = "End revision cannot be before start revision"
 					} else {
-						m.revEnd = m.commitsList.SelectedItem().FilterValue()[:10]
-						m.revEndChosen = true
+						hash := m.commitsList.SelectedItem().FilterValue()[:10]
+						m.revEnd = &hash
+						m.updateCommitDelegate()
 					}
 				}
 			}
 		case "ctrl+x":
 			switch m.activePane {
 			case commitsList, commitDetails:
-				m.revStartChosen = false
-				m.revEndChosen = false
+				m.revStart = nil
+				m.revEnd = nil
+				m.updateCommitDelegate()
 			}
 		case "ctrl+r":
 			switch m.activePane {
@@ -257,4 +281,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, tea.Batch(cmds...)
+}
+
+func (m *model) updateCommitDelegate() {
+	m.commitsListDel.revStart = m.revStart
+	m.commitsListDel.revEnd = m.revEnd
+	m.commitsList.SetDelegate(m.commitsListDel)
+}
+
+func (m *model) ensureInvariantsHold() {
+	if m.revEnd != nil && m.revStart == nil {
+		m.revEnd = nil
+		m.revStart = nil
+		m.revStartIndex = 0
+		m.updateCommitDelegate()
+	}
 }

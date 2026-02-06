@@ -57,10 +57,10 @@ func (m model) View() string {
 	}
 
 	var revisionRange string
-	if m.revStartChosen && !m.revEndChosen {
-		revisionRange = " " + revChoiceStyle.Render(fmt.Sprintf("%s..?", m.revStart))
-	} else if m.revEndChosen {
-		revisionRange = " " + revChoiceStyle.Render(fmt.Sprintf("%s..%s", m.revStart, m.revEnd))
+	if m.revStart != nil && m.revEnd == nil {
+		revisionRange = " " + revChoiceStyle.Render(fmt.Sprintf("%s..?", *m.revStart))
+	} else if m.revEnd != nil {
+		revisionRange = " " + revChoiceStyle.Render(fmt.Sprintf("%s..%s", *m.revStart, *m.revEnd))
 	}
 
 	footerStr := fmt.Sprintf("%s%s%s%s",

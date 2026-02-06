@@ -6,8 +6,6 @@ import (
 )
 
 func InitialModel(config Config) model {
-	commitListDel := defaultDelegate(lipgloss.Color(commitsListColor))
-
 	branchListDel := defaultDelegate(lipgloss.Color(branchListColor))
 
 	baseStyle = lipgloss.NewStyle().
@@ -21,8 +19,11 @@ func InitialModel(config Config) model {
 		PaddingLeft(0).
 		PaddingBottom(1)
 
+	commitListDel := newCommitDelegate(lipgloss.Color(commitsListColor))
+
 	m := model{
 		config:          config,
+		commitsListDel:  commitListDel,
 		commitsList:     list.New(nil, commitListDel, 0, 0),
 		branchList:      list.New(nil, branchListDel, 0, 0),
 		commitListStyle: tableListStyle,
