@@ -73,7 +73,9 @@ func Execute() {
 		ig = *cfg.IgnorePattern
 	}
 
-	r, err := git.PlainOpen(repoPath)
+	r, err := git.PlainOpenWithOptions(repoPath, &git.PlainOpenOptions{
+		DetectDotGit: true,
+	})
 	if err != nil {
 		die("Couldn't fetch git repo: %s", err.Error())
 	}
