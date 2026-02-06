@@ -5,7 +5,6 @@ import (
 )
 
 type Config struct {
-	Path            string
 	IgnorePattern   string
 	OpenInEditorCmd []string
 	Repo            *git.Repository

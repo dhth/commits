@@ -16,10 +16,7 @@ func die(msg string, args ...any) {
 	os.Exit(1)
 }
 
-var (
-	path          = flag.String("path", "", "path to the repo")
-	ignorePattern = flag.String("ignore-pattern", "", "ignore commit messages that match this regex")
-)
+var ignorePattern = flag.String("ignore-pattern", "", "ignore commit messages that match this regex")
 
 func Execute() {
 	currentUser, err := user.Current()
@@ -58,19 +55,9 @@ func Execute() {
 		die(cfgErrSuggestion(fmt.Sprintf("Error: file doesn't exist at %q", configFPExpanded)))
 	}
 
-	var repoPath string
-
-	if *path == "" {
-		cwd, err := os.Getwd()
-		if err != nil {
-			die("Couldn't get current working directory: %s", err.Error())
-		}
-		repoPath = cwd
-	} else {
-		repoPath, err = expandTilde(*path)
-		if err != nil {
-			die("Couldn't expand path: %s", err.Error())
-		}
+	repoPath, err := os.Getwd()
+	if err != nil {
+		die("Couldn't get current working directory: %s", err.Error())
 	}
 
 	cfg, err := readConfig(configFPExpanded)
@@ -86,13 +73,14 @@ func Execute() {
 		ig = *cfg.IgnorePattern
 	}
 
-	r, err := git.PlainOpen(repoPath)
+	r, err := git.PlainOpenWithOptions(repoPath, &git.PlainOpenOptions{
+		DetectDotGit: true,
+	})
 	if err != nil {
 		die("Couldn't fetch git repo: %s", err.Error())
 	}
 
 	config := ui.Config{
-		Path:            repoPath,
 		IgnorePattern:   ig,
 		OpenInEditorCmd: cfg.EditorCmd,
 		Repo:            r,

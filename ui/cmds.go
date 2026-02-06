@@ -70,8 +70,8 @@ func getBranches(repo *git.Repository) tea.Cmd {
 	}
 }
 
-func showRevisionRange(path string, revisionRange string) tea.Cmd {
-	c := exec.Command("git", "-C", path, "diff", revisionRange)
+func showRevisionRange(revisionRange string) tea.Cmd {
+	c := exec.Command("git", "diff", revisionRange)
 	return tea.ExecProcess(c, func(err error) tea.Msg {
 		if err != nil {
 			return showDiffFinished{err}
@@ -80,8 +80,8 @@ func showRevisionRange(path string, revisionRange string) tea.Cmd {
 	})
 }
 
-func showCommit(path string, hash string) tea.Cmd {
-	c := exec.Command("git", "-C", path, "show", hash)
+func showCommit(hash string) tea.Cmd {
+	c := exec.Command("git", "show", hash)
 	return tea.ExecProcess(c, func(err error) tea.Msg {
 		if err != nil {
 			return showDiffFinished{err}
@@ -98,8 +98,6 @@ func (m model) showGitLog() tea.Cmd {
 	prettyFormat := fmt.Sprintf("%%<(%d,trunc)%%Cred%%h%%Creset%%<(%d,trunc)%%s %%Cgreen%%<(%d,trunc)%%cr%%C(bold blue)%%<(%d,trunc)%%an%%Creset", hashWidth, messageWidth, dateWidth, authorWidth)
 
 	c := exec.Command("git",
-		"-C",
-		m.config.Path,
 		"log",
 		"--color",
 		"--since=\"3 months ago\"",
