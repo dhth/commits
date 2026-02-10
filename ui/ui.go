@@ -1,27 +1,27 @@
 package ui
 
 import (
+	"errors"
 	"fmt"
-	"log"
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/go-git/go-git/v5"
 )
 
-func RenderUI(repo *git.Repository, config Config) {
-	if len(os.Getenv("DEBUG")) > 0 {
+var errCouldntSetupDebugLogging = errors.New("couldn't set up debug logging")
+
+func RenderUI(repo *git.Repository, config Config) error {
+	if os.Getenv("DEBUG") == "1" {
 		f, err := tea.LogToFile("debug.log", "debug")
 		if err != nil {
-			fmt.Println("fatal:", err)
-			os.Exit(1)
+			return fmt.Errorf("%w: %w", errCouldntSetupDebugLogging, err)
 		}
-		defer func() {
-			_ = f.Close()
-		}()
+		defer func() { _ = f.Close() }()
 	}
+
 	p := tea.NewProgram(InitialModel(repo, config), tea.WithAltScreen())
-	if _, err := p.Run(); err != nil {
-		log.Fatalf("Something went wrong %s", err)
-	}
+	_, err := p.Run()
+
+	return err
 }

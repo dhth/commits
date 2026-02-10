@@ -1,9 +1,11 @@
 package cmd
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
-var (
-	configSampleFormat = `
+var configSampleFormat = `
 # commit messages that match "ignore_pattern" will not be shown in the TUI list
 ignore_pattern = '^\[regex\]'
 
@@ -25,23 +27,23 @@ open_commit_command = [ "nvim", "-c", ":DiffviewOpen {{hash}}~1..{{hash}}" ]
 # {{base}} and {{head}} are replaced at runtime
 open_range_command = [ "nvim", "-c", ":DiffviewOpen {{base}}..{{head}}" ]
 `
-	helpText = `commits lets you glance at git commits through a simple TUI
 
-Usage: commits [flags]
-`
-)
+func GetErrorFollowUp(err error) (string, bool) {
+	if errors.Is(err, errCouldntParseConfig) {
+		return fmt.Sprintf(`
+Make sure to structure the TOML config file as follows:
 
-func cfgErrSuggestion(msg string) string {
-	return fmt.Sprintf(`%s
+------%s------
+`, configSampleFormat), true
+	}
 
-Make sure to structure the toml config file as follows:
+	if errors.Is(err, errConfigIsInvalid) {
+		return fmt.Sprintf(`
+A valid config looks like this:
 
-------
-%s
-------
+------%s------
+`, configSampleFormat), true
+	}
 
-Use "commits --help" for more information`,
-		msg,
-		configSampleFormat,
-	)
+	return "", false
 }
