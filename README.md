@@ -30,8 +30,9 @@ go install github.com/dhth/commits@latest
 ---
 
 `commits` can receive its configuration via command line flags, and/or a TOML
-config file. The default location for this config file is
-`~/.config/commits/commits.toml`.
+config file. The default location for this config file is OS-specific:
+`$XDG_CONFIG_HOME/commits/commits.toml` on Linux, `~/Library/Application
+Support/commits/commits.toml` on macOS.
 
 ```toml
 # commit messages that match "ignore_pattern" will not be shown in the TUI list
