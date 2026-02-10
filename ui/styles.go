@@ -18,6 +18,8 @@ const (
 	commitStatsColor       = "#a2d2ff"
 	headRefColor           = "#d3869b"
 	revChoiceColor         = "#8ec07c"
+	revisionBaseColor      = "#b8bb26"
+	revisionHeadColor      = "#fb4934"
 	helpViewTitleColor     = "#83a598"
 	helpHeaderColor        = "#83a598"
 	helpSectionColor       = "#fabd2f"

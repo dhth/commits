@@ -65,12 +65,10 @@ func (d commitDelegate) Render(w io.Writer, m list.Model, index int, item list.I
 		descStyle = d.base.Styles.NormalDesc
 	}
 
-	if isStart && isEnd {
-		titleStyle = titleStyle.Foreground(lipgloss.Color("6")).Bold(true)
-	} else if isStart {
-		titleStyle = titleStyle.Foreground(lipgloss.Color("2")).Bold(true)
+	if isStart {
+		titleStyle = titleStyle.Foreground(lipgloss.Color(revisionBaseColor)).Bold(true)
 	} else if isEnd {
-		titleStyle = titleStyle.Foreground(lipgloss.Color("5")).Bold(true)
+		titleStyle = titleStyle.Foreground(lipgloss.Color(revisionHeadColor)).Bold(true)
 	}
 
 	title := titleStyle.Render(commit.Title())
