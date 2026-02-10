@@ -29,14 +29,6 @@ open_range_command = [ "nvim", "-c", ":DiffviewOpen {{base}}..{{head}}" ]
 `
 
 func GetErrorFollowUp(err error) (string, bool) {
-	if errors.Is(err, errConfigFileDoesntExist) {
-		return fmt.Sprintf(`
-Here's a sample config file to get you started:
-
-------%s------
-`, configSampleFormat), true
-	}
-
 	if errors.Is(err, errCouldntParseConfig) {
 		return fmt.Sprintf(`
 Make sure to structure the TOML config file as follows:

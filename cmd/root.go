@@ -55,6 +55,13 @@ Flags:
 	}
 	flag.Parse()
 
+	configPathWasExplicitlySet := false
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == "config-file-path" {
+			configPathWasExplicitlySet = true
+		}
+	})
+
 	if *configFilePath == "" {
 		return fmt.Errorf("config-file-path cannot be empty")
 	}
@@ -66,16 +73,21 @@ Flags:
 		return fmt.Errorf("%w: %w", errCouldntGetCwd, err)
 	}
 
+	var rawCfg ui.RawConfig
 	configBytes, err := os.ReadFile(configPathToUse)
-	if errors.Is(err, fs.ErrNotExist) {
-		return fmt.Errorf("%w at %q", errConfigFileDoesntExist, configPathToUse)
-	} else if err != nil {
-		return fmt.Errorf("%w: %w", errCouldntReadConfigFile, err)
-	}
-
-	rawCfg, err := parseConfig(string(configBytes))
 	if err != nil {
-		return fmt.Errorf("%w: %w", errCouldntParseConfig, err)
+		if errors.Is(err, fs.ErrNotExist) {
+			if configPathWasExplicitlySet {
+				return fmt.Errorf("%w at %q", errConfigFileDoesntExist, configPathToUse)
+			}
+		} else {
+			return fmt.Errorf("%w: %w", errCouldntReadConfigFile, err)
+		}
+	} else {
+		rawCfg, err = parseConfig(string(configBytes))
+		if err != nil {
+			return fmt.Errorf("%w: %w", errCouldntParseConfig, err)
+		}
 	}
 
 	if *ignorePattern != "" {
