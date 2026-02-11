@@ -65,43 +65,47 @@ commits -config-file-path='/path/to/config/file.toml'
 Reference Manual
 ---
 
-```
-commits Reference Manual
+`commits` has 4 views:
 
-commits has 4 views:
-    - Commit List View
-    - Commit Details View
-    - Branch List View
-    - Help View
+- Commit List View
+- Commit Details View
+- Branch List View
+- Help View
 
-Keyboard Shortcuts
+### Keyboard Shortcuts
 
-   General
+**General**
 
-       <tab>                           Switch focus between Commit List View and Commit Details View
-       <ctrl+e>                        Open commit/revision range
-       <ctrl+x>                        Clear revision range selection
-       <ctrl+b>                        Change branch
-       ?                               Show help view
+| Keymap     | Action                                                        |
+|------------|---------------------------------------------------------------|
+| `<tab>`    | Switch focus between Commit List View and Commit Details View |
+| `<ctrl+e>` | Open commit/revision range                                    |
+| `<ctrl+x>` | Clear revision range selection                                |
+| `<ctrl+b>` | Change branch                                                 |
+| `?`        | Show help view                                                |
 
-   Commit List View
+**Commit List View**
 
-       <enter>/<space>                 Show commit/revision range
-       <ctrl+t>                        Choose revision range start/end
-       <ctrl+p>                        Show git log
+| Keymap            | Action                          |
+|-------------------|---------------------------------|
+| `<enter>/<space>` | Show commit/revision range      |
+| `<ctrl+t>`        | Choose revision range start/end |
+| `<ctrl+p>`        | Show git log                    |
 
-   Commit Details View
+**Commit Details View**
 
-       <enter>/<space>                 Show commit/revision range
-       h/[                             Go to previous commit
-       l/]                             Go to next commit
+| Keymap            | Action                     |
+|-------------------|----------------------------|
+| `<enter>/<space>` | Show commit/revision range |
+| `h/[`             | Go to previous commit      |
+| `l/]`             | Go to next commit          |
 
-   Branch List View
+**Branch List View**
 
-       <enter>                         Pick branch
-       /                               Start filtering
-
-```
+| Keymap    | Action          |
+|-----------|-----------------|
+| `<enter>` | Pick branch     |
+| `/`       | Start filtering |
 
 Screenshots
 ---
@@ -109,10 +113,3 @@ Screenshots
 ![Screen 1](https://tools.dhruvs.space/images/commits/commits-1.png)
 
 ![Screen 2](https://tools.dhruvs.space/images/commits/commits-2.png)
-
-Acknowledgements
----
-
-`commits` is built using [bubbletea][1].
-
-[1]: https://github.com/charmbracelet/bubbletea
