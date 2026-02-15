@@ -4,9 +4,7 @@ This file provides guidance to AI agents when working with code in this reposito
 
 ## Project Overview
 
-`commits` is a terminal user interface (TUI) application that lets users browse
-git commits interactively. Built in Go using the Bubble Tea framework
-(Charmbracelet) for TUI components and go-git for Git operations.
+`commits` is a terminal user interface (TUI) application that lets users browse git commits interactively. Built in Go using the Bubble Tea framework for TUI components and go-git for Git operations.
 
 ## Common Commands
 
@@ -50,14 +48,62 @@ The UI has 4 panes (`commitsList`, `commitDetails`, `branchList`, `helpView`), t
 
 ### Key Files
 
-- `ui/model.go` - Central state: panes, viewport readiness, revision range selection
-- `ui/update.go` - All keyboard handling and message dispatch
-- `ui/cmds.go` - Async tea.Cmds: git operations (go-git), shell-outs (`git diff/show/log`), editor launch
-- `ui/delegate.go` - Custom list delegate that renders commit items with revision range highlighting
-- `ui/initial.go` - Model construction, bubbles component setup
-- `ui/view.go` - Renders the active pane + footer (branch, help hint, revision range)
+- `main.go` - Minimal entrypoint, calls `cmd.Execute()`
 - `cmd/root.go` - CLI entrypoint: flag parsing, config loading, repo opening
 - `cmd/config.go` - TOML config struct and parser
+- `cmd/errors.go` - Custom error types and user-friendly error follow-ups
+- `ui/ui.go` - `RenderUI()` entrypoint, Bubble Tea program setup, debug logging
+- `ui/model.go` - Central state: panes, viewport readiness, revision range selection
+- `ui/initial.go` - Model construction, bubbles component setup
+- `ui/update.go` - All keyboard handling and message dispatch
+- `ui/view.go` - Renders the active pane + footer (branch, help hint, revision range)
+- `ui/cmds.go` - Async tea.Cmds: git operations (go-git), shell-outs (`git diff/show/log`), editor launch
+- `ui/msgs.go` - All custom `tea.Msg` types used in the update loop
+- `ui/delegate.go` - Custom list delegate that renders commit items with revision range highlighting
+- `ui/types.go` - Domain types (`Commit`, `branchItem`) and their bubbles list interface implementations
+- `ui/config.go` - `RawConfig`/`Config` structs and command placeholder validation
+- `ui/styles.go` - All lipgloss style definitions and color constants
+- `ui/help.go` - Embedded reference manual shown in the help pane
+- `ui/utils.go` - String formatting helpers (`RightPadTrim`, `Trim`)
+
+## Config and CLI Flags
+
+`commits` can receive its configuration via command line flags, and/or a TOML config file. The default location for this config file is OS-specific: `$XDG_CONFIG_HOME/commits/commits.toml` on Linux, `~/Library/Application Support/commits/commits.toml` on macOS.
+
+### CLI Flags
+
+- `-config-file-path` - Override config file location
+- `-ignore-pattern` - Regex to filter out commits (overrides config file value)
+
+### TOML Config Options
+
+```toml
+# Regex to filter out commits from the list
+ignore_pattern = '^\[NO-CI\]'
+
+# Command for enter/space on a single commit (must contain {{hash}})
+# Default: ["git", "show", "{{hash}}"]
+show_commit_command = ["git", "show", "{{hash}}"]
+
+# Command for enter/space on a revision range (must contain {{base}} and {{head}})
+# Default: ["git", "diff", "{{base}}..{{head}}"]
+show_range_command = ["git", "diff", "{{base}}..{{head}}"]
+
+# Command for ctrl+e on a single commit (must contain {{hash}})
+open_commit_command = ["nvim", "-c", ":DiffviewOpen {{hash}}~1..{{hash}}"]
+
+# Command for ctrl+e on a revision range (must contain {{base}} and {{head}})
+open_range_command = ["nvim", "-c", ":DiffviewOpen {{base}}..{{head}}"]
+```
+
+Validation in `ui/config.go` enforces that `show_commit_command`/`open_commit_command` contain `{{hash}}`, and `show_range_command`/`open_range_command` contain both `{{base}}` and `{{head}}`.
+
+## Error Handling
+
+- Async tea.Cmds return errors inside their message structs (e.g., `commitsFetched.err`); the `Update` function displays these via `model.message` in the status bar
+- Custom sentinel errors are defined in `cmd/root.go` (config/repo errors) and `ui/ui.go` (debug logging)
+- `cmd/errors.go` provides `GetErrorFollowUp()` which maps errors to user-friendly help text with example TOML snippets
+- Never panic; errors are surfaced to the user gracefully
 
 ## Key Dependencies
 
