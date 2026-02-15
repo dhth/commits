@@ -31,12 +31,12 @@ signs:
       - "--yes"
     artifacts: checksum
 
-brews:
+homebrew_casks:
   - name: commits
     repository:
       owner: dhth
       name: homebrew-tap
-    directory: Formula
+    directory: Casks
     license: MIT
     homepage: "https://github.com/dhth/commits"
     description: "Glance at git commits via a simple TUI"

@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  id-token: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -12,24 +15,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Set up Go
-        uses: actions/setup-go@v6
+      - name: Build and release binary
+        uses: dhth/composite-actions/.github/actions/goreleaser@bec098cbb2a38c32be86a356d8de1da9e36c7503 # main
         with:
-          go-version-file: 'go.mod'
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@v3
-        with:
-          cosign-release: 'v2.5.0'
-      - name: Store Cosign private key in a file
-        run: 'echo "$COSIGN_KEY" > cosign.key'
-        shell: bash
-        env:
-          COSIGN_KEY: ${{secrets.COSIGN_KEY}}
-      - name: Release Binaries
-        uses: goreleaser/goreleaser-action@v6
-        with:
-          version: 'v2.9.0'
-          args: release --clean
-        env:
-          GITHUB_TOKEN: ${{secrets.GH_PAT}}
-          COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+          gh-token: ${{secrets.GH_PAT}}
