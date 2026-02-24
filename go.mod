@@ -8,7 +8,7 @@ require (
 	charm.land/lipgloss/v2 v2.0.0
 	github.com/BurntSushi/toml v1.6.0
 	github.com/dustin/go-humanize v1.0.1
-	github.com/go-git/go-git/v5 v5.16.4
+	github.com/go-git/go-git/v5 v5.16.5
 )
 
 require (
@@ -42,10 +42,9 @@ require (
 	github.com/skeema/knownhosts v1.3.1 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
-	golang.org/x/crypto v0.38.0 // indirect
-	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/crypto v0.45.0 // indirect
+	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.41.0 // indirect
-	golang.org/x/text v0.29.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )
