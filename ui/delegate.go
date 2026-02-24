@@ -2,11 +2,12 @@ package ui
 
 import (
 	"fmt"
+	"image/color"
 	"io"
 
-	"github.com/charmbracelet/bubbles/list"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/bubbles/v2/list"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 )
 
 type commitDelegate struct {
@@ -15,7 +16,7 @@ type commitDelegate struct {
 	revEnd   *string
 }
 
-func newCommitDelegate(color lipgloss.Color) commitDelegate {
+func newCommitDelegate(color color.Color) commitDelegate {
 	d := list.NewDefaultDelegate()
 
 	d.Styles.SelectedTitle = d.Styles.
@@ -77,7 +78,7 @@ func (d commitDelegate) Render(w io.Writer, m list.Model, index int, item list.I
 	_, _ = fmt.Fprintf(w, "%s\n%s", title, desc)
 }
 
-func defaultDelegate(color lipgloss.Color) list.DefaultDelegate {
+func defaultDelegate(color color.Color) list.DefaultDelegate {
 	d := list.NewDefaultDelegate()
 
 	d.Styles.SelectedTitle = d.Styles.

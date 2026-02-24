@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 	"github.com/go-git/go-git/v5"
 )
 
@@ -20,7 +20,7 @@ func RenderUI(repo *git.Repository, config Config) error {
 		defer func() { _ = f.Close() }()
 	}
 
-	p := tea.NewProgram(InitialModel(repo, config), tea.WithAltScreen())
+	p := tea.NewProgram(InitialModel(repo, config))
 	_, err := p.Run()
 
 	return err
