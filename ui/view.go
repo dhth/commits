@@ -3,10 +3,11 @@ package ui
 import (
 	"fmt"
 
-	"github.com/charmbracelet/lipgloss"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 )
 
-func (m model) View() string {
+func (m model) View() tea.View {
 	var content string
 	var footer string
 
@@ -71,11 +72,14 @@ func (m model) View() string {
 	)
 	footer = footerStyle.Render(footerStr)
 
-	return lipgloss.JoinVertical(lipgloss.Left,
+	v := tea.NewView(lipgloss.JoinVertical(lipgloss.Left,
 		content,
 		statusBar,
 		footer,
-	)
+	))
+	v.AltScreen = true
+
+	return v
 }
 
 func shortenHash(hash string) string {

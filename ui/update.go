@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/bubbles/viewport"
-	tea "github.com/charmbracelet/bubbletea"
+	"charm.land/bubbles/v2/list"
+	"charm.land/bubbles/v2/viewport"
+	tea "charm.land/bubbletea/v2"
 )
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -17,7 +17,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.ensureInvariantsHold()
 
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		switch msg.String() {
 		case "ctrl+c":
 			return m, tea.Quit
@@ -45,7 +45,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.commitDetailsVP.GotoTop()
 				m.activePane = commitsList
 			}
-		case "enter", " ":
+		case "enter", "space":
 			switch m.activePane {
 			case commitsList, commitDetails:
 				if len(m.commitsList.Items()) == 0 {
@@ -195,20 +195,20 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.branchList.SetWidth(msg.Width)
 
 		if !m.commitStatsVPReady {
-			m.commitDetailsVP = viewport.New(msg.Width, msg.Height-7)
+			m.commitDetailsVP = viewport.New(viewport.WithWidth(msg.Width), viewport.WithHeight(msg.Height-7))
 			m.commitStatsVPReady = true
 		} else {
-			m.commitDetailsVP.Width = msg.Width
-			m.commitDetailsVP.Height = msg.Height - 7
+			m.commitDetailsVP.SetWidth(msg.Width)
+			m.commitDetailsVP.SetHeight(msg.Height - 7)
 		}
 
 		if !m.helpVPReady {
-			m.helpVP = viewport.New(msg.Width, msg.Height-7)
+			m.helpVP = viewport.New(viewport.WithWidth(msg.Width), viewport.WithHeight(msg.Height-7))
 			m.helpVP.SetContent(helpText)
 			m.helpVPReady = true
 		} else {
-			m.helpVP.Width = msg.Width
-			m.helpVP.Height = msg.Height - 7
+			m.helpVP.SetWidth(msg.Width)
+			m.helpVP.SetHeight(msg.Height - 7)
 		}
 	case repoInfoFetchedMsg:
 		if msg.err == nil {
@@ -242,7 +242,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					})
 				}
 			}
-			m.commitsList.SetItems(commits)
+			cmds = append(cmds, m.commitsList.SetItems(commits))
 			m.commitsList.ResetSelected()
 
 			if msg.ref != nil {
@@ -261,7 +261,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					branch: branch,
 				})
 			}
-			m.branchList.SetItems(branches)
+			cmds = append(cmds, m.branchList.SetItems(branches))
 			m.branchList.ResetSelected()
 			m.activePane = branchList
 		}
