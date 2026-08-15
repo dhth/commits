@@ -8,24 +8,7 @@ This file provides guidance to AI agents when working with code in this reposito
 
 ## Common Commands
 
-```bash
-# Build and run
-just run              # go run .
-just build            # go build -ldflags "-w -s" .
-just install          # go install -ldflags "-w -s" .
-
-# Quality
-just lint             # golangci-lint run
-just fmt              # gofumpt -l -w .
-just vuln             # govulncheck ./...
-just all              # fmt + lint
-
-# Dependencies
-just tidy             # go mod tidy
-just upgrade          # go get -u ./...
-```
-
-Always run go commands via `just`.
+Read `mise.toml` for available development tasks and tools.
 
 ## Debugging
 
