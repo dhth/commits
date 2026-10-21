@@ -5,6 +5,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
+	"github.com/go-git/go-git/v5/plumbing"
 )
 
 func (m model) View() tea.View {
@@ -49,7 +50,7 @@ func (m model) View() tea.View {
 
 	var headRef string
 	if m.currentRef != nil {
-		headRef = fmt.Sprintf("  %s -> %s", headRefStyle.Render("HEAD"), headRefStyle.Render(m.currentRef.Name().Short()))
+		headRef = "  " + headRefLabel(m.currentRef)
 	}
 
 	var helpMsg string
@@ -80,6 +81,15 @@ func (m model) View() tea.View {
 	v.AltScreen = true
 
 	return v
+}
+
+func headRefLabel(ref *plumbing.Reference) string {
+	if ref.Name() == plumbing.HEAD {
+		return fmt.Sprintf("%s detached at %s",
+			headRefStyle.Render("HEAD"), headRefStyle.Render(shortenHash(ref.Hash().String())))
+	}
+
+	return fmt.Sprintf("%s -> %s", headRefStyle.Render("HEAD"), headRefStyle.Render(ref.Name().Short()))
 }
 
 func shortenHash(hash string) string {

@@ -100,7 +100,8 @@ Flags:
 	}
 
 	repo, err := git.PlainOpenWithOptions(repoPath, &git.PlainOpenOptions{
-		DetectDotGit: true,
+		DetectDotGit:          true,
+		EnableDotGitCommonDir: true,
 	})
 	if err != nil {
 		return fmt.Errorf("%w: %w", errCouldntGetRepo, err)
