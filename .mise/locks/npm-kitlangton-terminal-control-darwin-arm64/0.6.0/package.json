@@ -1,0 +1,7 @@
+{
+  "name": "mise-npm-install",
+  "private": true,
+  "dependencies": {
+    "@kitlangton/terminal-control-darwin-arm64": "0.6.0"
+  }
+}

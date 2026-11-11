@@ -1,0 +1,25 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@kitlangton/terminal-control-darwin-arm64':
+        specifier: 0.6.0
+        version: 0.6.0
+
+packages:
+
+  '@kitlangton/terminal-control-darwin-arm64@0.6.0':
+    resolution: {integrity: sha512-QNKFRKabri02FUF8HxelIue4QZe71H6BqgDQvvmH9uGXjgQ8bJktz8RdxcJPm9r15zdiA2zTVjN0hAvENvAFCA==}
+    cpu: [arm64]
+    os: [darwin]
+    hasBin: true
+
+snapshots:
+
+  '@kitlangton/terminal-control-darwin-arm64@0.6.0': {}
